@@ -1,0 +1,39 @@
+name: mcp_knowledge_ops
+description: Knowledge operations including pipelines, workflows, scheduling, and automated processing for curation, summarization, and pattern mining in the MCP ecosystem.
+version: 0.1.0
+homepage: https://app-appplayer.github.io/makemind
+repository: https://github.com/app-appplayer/mcp_knowledge_ops
+issue_tracker: https://github.com/app-appplayer/mcp_knowledge_ops/issues
+documentation: https://github.com/app-appplayer/mcp_knowledge_ops/wiki
+
+topics:
+  - knowledge-ops
+  - mcp
+  - ai
+  - dart
+  - pipelines
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  meta: ^1.9.0
+  mcp_bundle: ^0.1.0
+  mcp_fact_graph: ^0.1.0
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0
+  mockito: ^5.4.0
+  build_runner: ^2.4.0
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
+funding:
+  - https://www.patreon.com/mcpdevstudio
