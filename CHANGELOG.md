@@ -1,3 +1,35 @@
+## [0.2.0] - 2026-04-28 - Stateless Orchestration & New Pipelines
+
+### Added
+- Central `ExecutionEngine` coordinating pipeline and workflow runs.
+- New built-in pipelines — ingest, summary refresh, index rebuild, cascade refresh, clustering — alongside existing curation and pattern mining.
+- Workflow subsystem — review models, approval routing, cancellation.
+- Scheduler — MCP tools integration, scheduler events.
+- Runbooks subsystem.
+- Observability layer — events, errors, structured logging / metrics / tracing.
+- Standard port adapters implementing `mcp_bundle` ops Contract Layer.
+
+### Changed
+- Persistence delegated to `mcp_fact_graph`; `mcp_knowledge_ops` is now a stateless orchestration layer.
+- Pipeline / workflow infrastructure restructured around the new execution engine.
+- New dependency: `mcp_bundle ^0.3.0`.
+
+### Removed
+- Document, embedding, extraction, index, retrieval, search subsystems — now owned by `mcp_fact_graph` or replaced by Contract Layer ports.
+- Standalone summarization pipeline (replaced by summary refresh pipeline).
+
+---
+
+## [0.1.1] - Bugfix
+
+### Fixed
+- Removed duplicate OpsLlmPort, OpsLlmRequest, LlmCompletion definitions
+- Unified LLM Port types to use mcp_bundle Contract Layer exclusively
+- Updated pipeline classes to use LlmPort instead of OpsLlmPort
+- Fixed documentation examples to use correct LlmResponse.content field
+
+---
+
 ## [0.1.0] - Initial Release
 
 ### Added

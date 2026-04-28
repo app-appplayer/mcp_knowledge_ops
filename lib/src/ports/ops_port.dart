@@ -1,362 +1,238 @@
-/// Ops Ports - Abstract interfaces for knowledge ops dependencies.
+/// Ops Ports - Aggregated container for the standard ports consumed and
+/// provided by `mcp_knowledge_ops`.
 ///
-/// Defines contracts for integrating with fact_graph, skill, profile, and bundle.
+/// Per REDESIGN-PLAN.md Phase 7 (no-legacy), this module re-exports only
+/// the capability-named standard ports from `mcp_bundle`. The legacy
+/// consumer-sliced ports (`FactGraphPort`/`SkillPort`/`ProfilePort`/
+/// `BundlePort` from `mcp_bundle/src/ports/ops_ports.dart`) are not
+/// imported, re-exported, or referenced anywhere in this package.
 library;
 
-/// Port for fact graph operations.
-abstract class FactGraphPort {
-  /// Create evidence from raw content.
-  Future<String> createEvidence(EvidenceInput input);
+// ── provided ports (implemented by MOD-CORE-011 adapters) ─────────────────
+export 'package:mcp_bundle/src/ports/workflow_port.dart';
+export 'package:mcp_bundle/src/ports/pipeline_port.dart';
+export 'package:mcp_bundle/src/ports/schedule_trigger_port.dart';
+// Hide AuditEvent / AuditFilter because the internal
+// `observability/audit_recorder.dart` defines richer types with the
+// same names. Hosts needing the standard shapes import the port file
+// directly or use `AuditPortAdapter`.
+export 'package:mcp_bundle/src/ports/audit_port.dart'
+    hide AuditEvent, AuditFilter;
+// Hide RunbookExecution / RunbookDescriptor similarly — the internal
+// `runbooks/runbook.dart` uses a different `RunbookExecution` class.
+export 'package:mcp_bundle/src/ports/runbook_port.dart'
+    hide RunbookExecution, RunbookDescriptor;
 
-  /// Extract fragments from evidence.
-  Future<List<String>> extractFragments(String evidenceId);
+// ── data/context consumed ports ───────────────────────────────────────────
+export 'package:mcp_bundle/src/ports/facts_port.dart';
+export 'package:mcp_bundle/src/ports/claims_port.dart';
+export 'package:mcp_bundle/src/ports/evidence_port.dart';
+export 'package:mcp_bundle/src/ports/context_bundle_port.dart';
+export 'package:mcp_bundle/src/ports/retrieval_port.dart';
 
-  /// Create candidates from fragments.
-  Future<List<String>> createCandidates(List<String> fragmentIds);
+// ── skill + MCP consumed ports ────────────────────────────────────────────
+export 'package:mcp_bundle/src/ports/skill_runtime_port.dart';
+export 'package:mcp_bundle/src/ports/mcp_port.dart';
 
-  /// Confirm a candidate.
-  Future<String?> confirmCandidate(String candidateId);
+// ── profile consumed ports ────────────────────────────────────────────────
+export 'package:mcp_bundle/src/ports/appraisal_port.dart';
+export 'package:mcp_bundle/src/ports/decision_port.dart';
+export 'package:mcp_bundle/src/ports/metrics_port.dart';
 
-  /// Get pending candidates.
-  Future<List<CandidateSummary>> getPendingCandidates({int? limit});
+// ── LLM / storage / cross-cutting ─────────────────────────────────────────
+export 'package:mcp_bundle/src/ports/llm_port.dart';
+export 'package:mcp_bundle/src/ports/storage_port.dart';
+export 'package:mcp_bundle/src/ports/metric_port.dart';
+export 'package:mcp_bundle/src/ports/event_port.dart';
+export 'package:mcp_bundle/src/ports/notification_port.dart';
+export 'package:mcp_bundle/src/ports/approval_port.dart';
 
-  /// Mark summaries as stale.
-  Future<void> markSummariesStale(List<String> eventIds);
+// Philosophy port (hide PipelineContext to avoid clash with local type in
+// `pipeline.dart`).
+export 'package:mcp_bundle/src/ports/philosophy_port.dart' hide PipelineContext;
 
-  /// Refresh a summary.
-  Future<void> refreshSummary(String summaryId);
+// ── shared DTOs used by handlers ──────────────────────────────────────────
+export 'package:mcp_bundle/src/types/claim.dart';
+export 'package:mcp_bundle/src/types/period.dart';
+export 'package:mcp_bundle/src/types/appraisal_result.dart';
+export 'package:mcp_bundle/src/types/decision_guidance.dart';
+// `SkillResult.Artifact` is hidden because the execution-result module
+// defines its own `Artifact` type.
+export 'package:mcp_bundle/src/types/skill_result.dart' hide Artifact;
 
-  /// Get stale summaries.
-  Future<List<String>> getStaleSummaries({Duration? staleness});
+// ── internal imports for the OpsPorts container ───────────────────────────
+import 'package:mcp_bundle/src/ports/workflow_port.dart';
+import 'package:mcp_bundle/src/ports/pipeline_port.dart';
+import 'package:mcp_bundle/src/ports/schedule_trigger_port.dart';
+import 'package:mcp_bundle/src/ports/audit_port.dart';
+import 'package:mcp_bundle/src/ports/runbook_port.dart';
+import 'package:mcp_bundle/src/ports/facts_port.dart';
+import 'package:mcp_bundle/src/ports/claims_port.dart';
+import 'package:mcp_bundle/src/ports/evidence_port.dart';
+import 'package:mcp_bundle/src/ports/context_bundle_port.dart';
+import 'package:mcp_bundle/src/ports/retrieval_port.dart';
+import 'package:mcp_bundle/src/ports/skill_runtime_port.dart';
+import 'package:mcp_bundle/src/ports/mcp_port.dart';
+import 'package:mcp_bundle/src/ports/appraisal_port.dart';
+import 'package:mcp_bundle/src/ports/decision_port.dart';
+import 'package:mcp_bundle/src/ports/metrics_port.dart';
+import 'package:mcp_bundle/src/ports/llm_port.dart';
+import 'package:mcp_bundle/src/ports/storage_port.dart';
+import 'package:mcp_bundle/src/ports/metric_port.dart';
+import 'package:mcp_bundle/src/ports/event_port.dart';
+import 'package:mcp_bundle/src/ports/notification_port.dart';
+import 'package:mcp_bundle/src/ports/approval_port.dart';
+import 'package:mcp_bundle/src/ports/philosophy_port.dart';
 
-  /// Store pattern.
-  Future<String> storePattern(PatternInput pattern);
-}
+/// Aggregated port container for `mcp_knowledge_ops`.
+///
+/// Structure (REDESIGN-PLAN.md Phase 7 §3.5):
+///   1. Five **provided** ports implemented by this package via adapters
+///      (see `src/adapters/`). They are required.
+///   2. Ten **required consumed** ports supplied by other packages.
+///   3. Seven **optional consumed** ports.
+class OpsPorts {
+  // ── 1. Provided ports (adapters implemented in src/adapters/) ──
 
-/// Evidence input.
-class EvidenceInput {
-  /// Raw content.
-  final String content;
+  /// Workflow execution facade.
+  final WorkflowPort workflow;
 
-  /// Source type.
-  final String sourceType;
+  /// Pipeline execution facade.
+  final PipelinePort pipeline;
 
-  /// MIME type.
-  final String? mimeType;
+  /// Cron/event/deadline scheduling facade.
+  final ScheduleTriggerPort scheduler;
 
-  /// Metadata.
-  final Map<String, dynamic> metadata;
+  /// Audit event recording/query facade.
+  final AuditPort audit;
 
-  /// Source information.
-  final SourceInfo? source;
+  /// Runbook execution facade.
+  final RunbookPort runbook;
 
-  const EvidenceInput({
-    required this.content,
-    required this.sourceType,
-    this.mimeType,
-    this.metadata = const {},
-    this.source,
+  // ── 2. Required consumed ports (capability-named) ──
+
+  /// Fact CRUD over the fact graph.
+  final FactsPort facts;
+
+  /// Claim CRUD and validation.
+  final ClaimsPort claims;
+
+  /// Skill execution runtime.
+  final SkillRuntimePort skillRuntime;
+
+  /// Profile dimension appraisal.
+  final AppraisalPort appraisal;
+
+  /// Profile policy decision.
+  final DecisionPort decision;
+
+  /// Profile evaluation metrics (plural — evaluation layer).
+  final MetricsPort metrics;
+
+  /// MCP tool/resource access.
+  final McpPort mcp;
+
+  /// LLM completion.
+  final LlmPort llm;
+
+  /// Philosophy evaluation & intervention.
+  final PhilosophyPort philosophy;
+
+  /// Key-value storage for checkpoints, rollback, dedupe.
+  final KvStoragePort kvStorage;
+
+  // ── 3. Optional consumed ports ──
+
+  /// Evidence fragment extraction.
+  final EvidencePort? evidence;
+
+  /// Context bundle assembly for LLM prompts.
+  final ContextBundlePort? contextBundle;
+
+  /// Knowledge retrieval / RAG.
+  final RetrievalPort? retrieval;
+
+  /// Approval routing (human-in-the-loop).
+  final ApprovalPort? approval;
+
+  /// Notification delivery.
+  final NotificationPort? notification;
+
+  /// Event pub/sub.
+  final EventPort? event;
+
+  /// Instrumentation-layer metric export (singular — distinct from
+  /// evaluation-layer [MetricsPort]).
+  final MetricPort? metric;
+
+  const OpsPorts({
+    required this.workflow,
+    required this.pipeline,
+    required this.scheduler,
+    required this.audit,
+    required this.runbook,
+    required this.facts,
+    required this.claims,
+    required this.skillRuntime,
+    required this.appraisal,
+    required this.decision,
+    required this.metrics,
+    required this.mcp,
+    required this.llm,
+    required this.philosophy,
+    required this.kvStorage,
+    this.evidence,
+    this.contextBundle,
+    this.retrieval,
+    this.approval,
+    this.notification,
+    this.event,
+    this.metric,
   });
 }
 
-/// Source information.
-class SourceInfo {
-  /// Source URI.
-  final String? uri;
-
-  /// Author.
-  final String? author;
-
-  /// Timestamp.
-  final DateTime? timestamp;
-
-  const SourceInfo({
-    this.uri,
-    this.author,
-    this.timestamp,
-  });
-}
-
-/// Candidate summary.
-class CandidateSummary {
-  /// Candidate ID.
-  final String candidateId;
-
-  /// Object type.
-  final String objectType;
-
-  /// Confidence score.
-  final double confidence;
-
-  /// Unresolved issue count.
-  final int unresolvedCount;
-
-  /// Created at.
-  final DateTime createdAt;
-
-  const CandidateSummary({
-    required this.candidateId,
-    required this.objectType,
-    required this.confidence,
-    required this.unresolvedCount,
-    required this.createdAt,
-  });
-}
-
-/// Pattern input.
-class PatternInput {
-  /// Pattern type.
-  final String type;
-
-  /// Pattern criteria.
-  final Map<String, dynamic> criteria;
-
-  /// Confidence.
-  final double confidence;
-
-  /// Metadata.
-  final Map<String, dynamic> metadata;
-
-  const PatternInput({
-    required this.type,
-    required this.criteria,
-    required this.confidence,
-    this.metadata = const {},
-  });
-}
-
-/// Port for skill operations.
-abstract class SkillPort {
-  /// Execute a skill.
-  Future<SkillResult> executeSkill(
-    String skillId,
-    Map<String, dynamic> inputs,
-  );
-
-  /// Get available skills.
-  Future<List<SkillInfo>> getAvailableSkills();
-
-  /// Build skill from pattern.
-  Future<String> buildSkillFromPattern(String patternId);
-}
-
-/// Skill execution result.
-class SkillResult {
-  /// Whether execution succeeded.
-  final bool success;
-
-  /// Output value.
-  final dynamic output;
-
-  /// Error message if failed.
-  final String? error;
-
-  /// Execution duration.
-  final Duration duration;
-
-  const SkillResult({
-    required this.success,
-    this.output,
-    this.error,
-    required this.duration,
-  });
-}
-
-/// Skill information.
-class SkillInfo {
-  /// Skill ID.
-  final String skillId;
-
-  /// Skill name.
-  final String name;
-
-  /// Description.
-  final String? description;
-
-  /// Version.
-  final String version;
-
-  const SkillInfo({
-    required this.skillId,
-    required this.name,
-    this.description,
-    required this.version,
-  });
-}
-
-/// Port for profile operations.
-abstract class ProfilePort {
-  /// Apply profile to context.
-  Future<ProfileOutput> applyProfile(
-    String profileId,
-    Map<String, dynamic> context,
-  );
-
-  /// Build profile from pattern.
-  Future<String> buildProfileFromPattern(String patternId);
-
-  /// Evaluate output against profile.
-  Future<EvaluationOutput> evaluate(
-    String profileId,
-    String content,
-  );
-}
-
-/// Profile application output.
-class ProfileOutput {
-  /// Rendered prompt.
-  final String prompt;
-
-  /// Enabled capabilities.
-  final List<String> capabilities;
-
-  /// Metadata.
-  final Map<String, dynamic> metadata;
-
-  const ProfileOutput({
-    required this.prompt,
-    required this.capabilities,
-    this.metadata = const {},
-  });
-}
-
-/// Evaluation output.
-class EvaluationOutput {
-  /// Overall score.
-  final double score;
-
-  /// Dimension scores.
-  final Map<String, double> dimensions;
-
-  /// Issues found.
-  final List<String> issues;
-
-  const EvaluationOutput({
-    required this.score,
-    required this.dimensions,
-    this.issues = const [],
-  });
-}
-
-/// Port for bundle operations.
-abstract class BundlePort {
-  /// Create a bundle.
-  Future<String> createBundle(BundleInput input);
-
-  /// Sign a bundle.
-  Future<SignedBundle> signBundle(String bundleId);
-
-  /// Validate a bundle.
-  Future<BundleValidation> validateBundle(String bundleId);
-}
-
-/// Bundle input.
-class BundleInput {
-  /// Bundle name.
-  final String name;
-
-  /// Bundle version.
-  final String version;
-
-  /// Skill IDs to include.
-  final List<String> skillIds;
-
-  /// Profile IDs to include.
-  final List<String> profileIds;
-
-  /// Asset paths.
-  final List<String> assetPaths;
-
-  /// Metadata.
-  final Map<String, dynamic> metadata;
-
-  const BundleInput({
-    required this.name,
-    required this.version,
-    this.skillIds = const [],
-    this.profileIds = const [],
-    this.assetPaths = const [],
-    this.metadata = const {},
-  });
-}
-
-/// Signed bundle.
-class SignedBundle {
-  /// Bundle ID.
-  final String bundleId;
-
-  /// Signature.
-  final String signature;
-
-  /// Signed at.
-  final DateTime signedAt;
-
-  const SignedBundle({
-    required this.bundleId,
-    required this.signature,
-    required this.signedAt,
-  });
-}
-
-/// Bundle validation result.
-class BundleValidation {
-  /// Whether bundle is valid.
-  final bool valid;
-
-  /// Validation errors.
-  final List<String> errors;
-
-  /// Validation warnings.
-  final List<String> warnings;
-
-  const BundleValidation({
-    required this.valid,
-    this.errors = const [],
-    this.warnings = const [],
-  });
-}
-
-/// Port for LLM operations in orchestration.
-abstract class OpsLlmPort {
-  /// Complete a prompt.
-  Future<LlmCompletion> complete(OpsLlmRequest request);
-
-  /// Generate embeddings.
-  Future<List<double>> embed(String text);
-}
-
-/// LLM request.
-class OpsLlmRequest {
-  /// System prompt.
-  final String? systemPrompt;
-
-  /// User prompt.
-  final String prompt;
-
-  /// Maximum tokens.
-  final int? maxTokens;
-
-  /// Temperature.
-  final double? temperature;
-
-  const OpsLlmRequest({
-    this.systemPrompt,
-    required this.prompt,
-    this.maxTokens,
-    this.temperature,
-  });
-}
-
-/// LLM completion.
-class LlmCompletion {
-  /// Response content.
-  final String content;
-
-  /// Token usage.
-  final int? tokensUsed;
-
-  const LlmCompletion({
-    required this.content,
-    this.tokensUsed,
+/// Value type holding only the consumed ports (10 required + 7 optional).
+///
+/// Used by `OpsRuntime.fromConsumedPorts` to defer construction of the
+/// five provided-port adapters. After runtime assembly, combining
+/// [ConsumedOpsPorts] with the five adapters produces a full [OpsPorts].
+class ConsumedOpsPorts {
+  final FactsPort facts;
+  final ClaimsPort claims;
+  final SkillRuntimePort skillRuntime;
+  final AppraisalPort appraisal;
+  final DecisionPort decision;
+  final MetricsPort metrics;
+  final McpPort mcp;
+  final LlmPort llm;
+  final PhilosophyPort philosophy;
+  final KvStoragePort kvStorage;
+
+  final EvidencePort? evidence;
+  final ContextBundlePort? contextBundle;
+  final RetrievalPort? retrieval;
+  final ApprovalPort? approval;
+  final NotificationPort? notification;
+  final EventPort? event;
+  final MetricPort? metric;
+
+  const ConsumedOpsPorts({
+    required this.facts,
+    required this.claims,
+    required this.skillRuntime,
+    required this.appraisal,
+    required this.decision,
+    required this.metrics,
+    required this.mcp,
+    required this.llm,
+    required this.philosophy,
+    required this.kvStorage,
+    this.evidence,
+    this.contextBundle,
+    this.retrieval,
+    this.approval,
+    this.notification,
+    this.event,
+    this.metric,
   });
 }

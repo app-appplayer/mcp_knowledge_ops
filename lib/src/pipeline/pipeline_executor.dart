@@ -7,6 +7,12 @@ import 'pipeline.dart';
 import 'pipeline_handler.dart';
 
 /// Executes pipelines.
+///
+/// **Deprecated**: Use [ExecutionEngine.executePipeline] instead.
+/// ExecutionEngine provides gates, checkpoints, parallel execution,
+/// port composition, and richer event emission. This class will be
+/// removed in a future release.
+@Deprecated('Use ExecutionEngine.executePipeline() instead')
 class PipelineExecutor {
   /// Handler registry.
   final PipelineHandlerRegistry _registry;
@@ -321,8 +327,7 @@ class PipelineExecutor {
     return HandlerContext(
       runId: context.runId,
       stageId: stage.id,
-      pipelineId: '',
-      traceId: context.traceId,
+      traceId: context.traceId ?? '',
       asOf: context.asOf,
       config: context.config.extra,
     );
@@ -491,6 +496,33 @@ class PipelineCompletedEvent implements PipelineEvent {
     required this.runId,
     required this.success,
     required this.metrics,
+    required this.timestamp,
+  });
+}
+
+/// Pipeline failed event per spec section 9.
+class PipelineFailedEvent implements PipelineEvent {
+  @override
+  final String type = 'pipeline_failed';
+  @override
+  final String pipelineId;
+  @override
+  final String runId;
+
+  /// Error description.
+  final String error;
+
+  /// The stage that failed, if applicable.
+  final String? failedStage;
+
+  @override
+  final DateTime timestamp;
+
+  const PipelineFailedEvent({
+    required this.pipelineId,
+    required this.runId,
+    required this.error,
+    this.failedStage,
     required this.timestamp,
   });
 }

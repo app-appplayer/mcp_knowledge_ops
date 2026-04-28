@@ -1,451 +1,63 @@
-/// Workflow Executor - Executes workflow state machines.
+/// Workflow Executor - Deprecated state-machine workflow executor.
 ///
-/// Provides workflow execution with state management, transitions,
-/// timeouts, and cancellation.
+/// **Deprecated**: Use [ExecutionEngine.executeWorkflow] instead.
+/// ExecutionEngine provides sequential stage-based workflow execution
+/// with gates, checkpoints, and approvals — which is the optimal model
+/// for linear build/release workflows.
 library;
 
-import 'workflow.dart';
-
-/// Executes workflows.
+/// Executes workflows using a state-machine model.
+///
+/// **Deprecated**: Use [ExecutionEngine.executeWorkflow] instead.
+@Deprecated('Use ExecutionEngine.executeWorkflow() instead')
 class WorkflowExecutor {
-  /// Action handler registry.
-  final WorkflowActionHandlerRegistry _handlers;
-
-  /// Event listener.
-  final WorkflowEventListener? _listener;
-
-  /// Active executions.
-  final Map<String, WorkflowExecution> _executions = {};
-
   WorkflowExecutor({
     required WorkflowActionHandlerRegistry handlers,
     WorkflowEventListener? listener,
-  })  : _handlers = handlers,
-        _listener = listener;
+  });
 
   /// Start a new workflow execution.
-  Future<WorkflowExecution> start<T extends WorkflowContext>(
-    Workflow<T> workflow,
+  @Deprecated('Use ExecutionEngine.executeWorkflow() instead')
+  Future<WorkflowExecution> start(
+    dynamic workflow,
     Map<String, dynamic> initialData,
   ) async {
-    final context = workflow.createContext(initialData);
-
-    final execution = WorkflowExecution(
-      workflow: workflow,
-      context: context,
-      status: WorkflowStatus.running,
-      startedAt: DateTime.now(),
+    throw UnimplementedError(
+      'WorkflowExecutor is deprecated. Use ExecutionEngine.executeWorkflow() instead.',
     );
-
-    _executions[context.executionId] = execution;
-
-    _emitEvent(WorkflowStartedEvent(
-      executionId: context.executionId,
-      workflowId: workflow.id,
-      timestamp: DateTime.now(),
-    ));
-
-    // Enter initial state
-    await _enterState(workflow, context, workflow.initialState);
-
-    return execution;
   }
 
   /// Send event to workflow.
+  @Deprecated('Use ExecutionEngine.executeWorkflow() instead')
   Future<void> sendEvent(
     String executionId,
     String event, {
     Map<String, dynamic>? payload,
   }) async {
-    final execution = _executions[executionId];
-    if (execution == null) {
-      throw WorkflowException(
-        code: 'EXECUTION_NOT_FOUND',
-        message: 'Execution not found: $executionId',
-      );
-    }
-
-    if (execution.status != WorkflowStatus.running) {
-      throw WorkflowException(
-        code: 'WORKFLOW_NOT_RUNNING',
-        message: 'Workflow is not running: ${execution.status}',
-      );
-    }
-
-    final workflow = execution.workflow;
-    final context = execution.context;
-
-    // Update context with payload
-    if (payload != null) {
-      context.updateData(payload);
-    }
-
-    // Find matching transition
-    final transition = _findTransition(workflow, context.currentState, event);
-    if (transition == null) {
-      _emitEvent(WorkflowEventIgnoredEvent(
-        executionId: executionId,
-        workflowId: workflow.id,
-        event: event,
-        currentState: context.currentState,
-        timestamp: DateTime.now(),
-      ));
-      return;
-    }
-
-    // Check guard condition
-    if (transition.guard != null && !_evaluateGuard(transition.guard!, context)) {
-      _emitEvent(WorkflowTransitionGuardedEvent(
-        executionId: executionId,
-        workflowId: workflow.id,
-        transitionId: transition.id,
-        guard: transition.guard!,
-        timestamp: DateTime.now(),
-      ));
-      return;
-    }
-
-    // Execute transition
-    await _executeTransition(workflow, context, transition);
+    throw UnimplementedError(
+      'WorkflowExecutor is deprecated. Use ExecutionEngine.executeWorkflow() instead.',
+    );
   }
 
   /// Cancel a workflow execution.
+  @Deprecated('Use ExecutionEngine.executeWorkflow() instead')
   Future<void> cancel(String executionId, {String? reason}) async {
-    final execution = _executions[executionId];
-    if (execution == null) return;
-
-    final workflow = execution.workflow;
-    final context = execution.context;
-
-    // Execute compensation actions
-    await _executeCompensation(workflow, context);
-
-    // Find cancelled state
-    final cancelledState = workflow.states.where((s) => s.type == StateType.cancelled).firstOrNull;
-
-    if (cancelledState != null) {
-      await _enterState(workflow, context, cancelledState);
-    }
-
-    execution.status = WorkflowStatus.cancelled;
-    execution.completedAt = DateTime.now();
-
-    context.addHistoryEntry(WorkflowHistoryEntry(
-      type: HistoryEntryType.cancelled,
-      timestamp: DateTime.now(),
-      metadata: {'reason': reason},
-    ));
-
-    _emitEvent(WorkflowCancelledEvent(
-      executionId: executionId,
-      workflowId: workflow.id,
-      reason: reason,
-      timestamp: DateTime.now(),
-    ));
+    throw UnimplementedError(
+      'WorkflowExecutor is deprecated. Use ExecutionEngine.executeWorkflow() instead.',
+    );
   }
 
   /// Get execution by ID.
-  WorkflowExecution? getExecution(String executionId) {
-    return _executions[executionId];
-  }
+  WorkflowExecution? getExecution(String executionId) => null;
 
   /// List active executions.
-  List<WorkflowExecution> listActiveExecutions() {
-    return _executions.values
-        .where((e) => e.status == WorkflowStatus.running)
-        .toList();
-  }
-
-  Future<void> _enterState(
-    Workflow workflow,
-    WorkflowContext context,
-    WorkflowState state,
-  ) async {
-    final previousState = context.currentState;
-    context.transitionTo(state.id);
-
-    context.addHistoryEntry(WorkflowHistoryEntry(
-      type: HistoryEntryType.stateEntered,
-      fromState: previousState,
-      toState: state.id,
-      timestamp: DateTime.now(),
-    ));
-
-    _emitEvent(WorkflowStateEnteredEvent(
-      executionId: context.executionId,
-      workflowId: context.workflowId,
-      stateId: state.id,
-      timestamp: DateTime.now(),
-    ));
-
-    // Execute entry actions
-    for (final action in state.entryActions) {
-      await _executeAction(action, context);
-    }
-
-    // Check if terminal state
-    if (state.isTerminal) {
-      await _completeWorkflow(workflow, context, state);
-    }
-
-    // Start timeout if configured
-    if (state.timeout != null) {
-      _startTimeout(context.executionId, state);
-    }
-  }
-
-  Future<void> _exitState(
-    Workflow workflow,
-    WorkflowContext context,
-    WorkflowState state,
-  ) async {
-    // Execute exit actions
-    for (final action in state.exitActions) {
-      await _executeAction(action, context);
-    }
-
-    context.addHistoryEntry(WorkflowHistoryEntry(
-      type: HistoryEntryType.stateExited,
-      fromState: state.id,
-      timestamp: DateTime.now(),
-    ));
-
-    _emitEvent(WorkflowStateExitedEvent(
-      executionId: context.executionId,
-      workflowId: context.workflowId,
-      stateId: state.id,
-      timestamp: DateTime.now(),
-    ));
-  }
-
-  Future<void> _executeTransition(
-    Workflow workflow,
-    WorkflowContext context,
-    WorkflowTransition transition,
-  ) async {
-    final fromState = workflow.states.where((s) => s.id == transition.fromState).first;
-    final toState = workflow.states.where((s) => s.id == transition.toState).first;
-
-    // Exit current state
-    await _exitState(workflow, context, fromState);
-
-    // Execute transition actions
-    for (final action in transition.actions) {
-      await _executeAction(action, context);
-    }
-
-    context.addHistoryEntry(WorkflowHistoryEntry(
-      type: HistoryEntryType.transition,
-      fromState: transition.fromState,
-      toState: transition.toState,
-      event: transition.event,
-      timestamp: DateTime.now(),
-    ));
-
-    _emitEvent(WorkflowTransitionEvent(
-      executionId: context.executionId,
-      workflowId: context.workflowId,
-      transitionId: transition.id,
-      fromState: transition.fromState,
-      toState: transition.toState,
-      timestamp: DateTime.now(),
-    ));
-
-    // Enter new state
-    await _enterState(workflow, context, toState);
-  }
-
-  Future<void> _executeAction(
-    WorkflowAction action,
-    WorkflowContext context,
-  ) async {
-    final handler = _handlers.get(action.handler);
-    if (handler == null) {
-      throw WorkflowException(
-        code: 'HANDLER_NOT_FOUND',
-        message: 'Handler not found: ${action.handler}',
-      );
-    }
-
-    final actionContext = ActionExecutionContext(
-      executionId: context.executionId,
-      workflowId: context.workflowId,
-      stateId: context.currentState,
-      actionId: action.id,
-      parameters: action.parameters,
-      data: context.data,
-    );
-
-    try {
-      final result = await handler.execute(actionContext);
-      if (result.updates != null) {
-        context.updateData(result.updates!);
-      }
-
-      context.addHistoryEntry(WorkflowHistoryEntry(
-        type: HistoryEntryType.actionExecuted,
-        timestamp: DateTime.now(),
-        metadata: {
-          'actionId': action.id,
-          'handler': action.handler,
-          'success': true,
-        },
-      ));
-    } catch (e) {
-      context.addHistoryEntry(WorkflowHistoryEntry(
-        type: HistoryEntryType.error,
-        timestamp: DateTime.now(),
-        metadata: {
-          'actionId': action.id,
-          'handler': action.handler,
-          'error': e.toString(),
-        },
-      ));
-
-      // Retry if configured
-      if (action.retryConfig != null) {
-        // Retry logic would go here
-      }
-
-      rethrow;
-    }
-  }
-
-  Future<void> _completeWorkflow(
-    Workflow workflow,
-    WorkflowContext context,
-    WorkflowState terminalState,
-  ) async {
-    final execution = _executions[context.executionId];
-    if (execution == null) return;
-
-    execution.completedAt = DateTime.now();
-
-    switch (terminalState.type) {
-      case StateType.completed:
-        execution.status = WorkflowStatus.completed;
-        context.addHistoryEntry(WorkflowHistoryEntry(
-          type: HistoryEntryType.completed,
-          timestamp: DateTime.now(),
-        ));
-        _emitEvent(WorkflowCompletedEvent(
-          executionId: context.executionId,
-          workflowId: workflow.id,
-          timestamp: DateTime.now(),
-        ));
-        break;
-
-      case StateType.failed:
-        execution.status = WorkflowStatus.failed;
-        context.addHistoryEntry(WorkflowHistoryEntry(
-          type: HistoryEntryType.failed,
-          timestamp: DateTime.now(),
-        ));
-        _emitEvent(WorkflowFailedEvent(
-          executionId: context.executionId,
-          workflowId: workflow.id,
-          timestamp: DateTime.now(),
-        ));
-        break;
-
-      case StateType.cancelled:
-        execution.status = WorkflowStatus.cancelled;
-        context.addHistoryEntry(WorkflowHistoryEntry(
-          type: HistoryEntryType.cancelled,
-          timestamp: DateTime.now(),
-        ));
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  Future<void> _executeCompensation(
-    Workflow workflow,
-    WorkflowContext context,
-  ) async {
-    // Execute compensation actions for completed states in reverse order
-    final completedStates = context.history
-        .where((h) => h.type == HistoryEntryType.stateExited)
-        .map((h) => h.fromState)
-        .whereType<String>()
-        .toList()
-        .reversed;
-
-    for (final stateId in completedStates) {
-      final state = workflow.states.where((s) => s.id == stateId).firstOrNull;
-      if (state == null) continue;
-
-      // Find compensation actions
-      final compensations = state.exitActions
-          .where((a) => a.type == ActionType.compensate);
-
-      for (final action in compensations) {
-        try {
-          await _executeAction(action, context);
-        } catch (e) {
-          // Log but continue with other compensations
-        }
-      }
-    }
-  }
-
-  WorkflowTransition? _findTransition(
-    Workflow workflow,
-    String currentState,
-    String event,
-  ) {
-    final transitions = workflow.transitions
-        .where((t) => t.fromState == currentState && t.event == event)
-        .toList();
-
-    if (transitions.isEmpty) return null;
-
-    // Sort by priority (highest first)
-    transitions.sort((a, b) => b.priority.compareTo(a.priority));
-    return transitions.first;
-  }
-
-  bool _evaluateGuard(String guard, WorkflowContext context) {
-    // Simple guard evaluation
-    final trimmed = guard.trim();
-
-    if (trimmed == 'true') return true;
-    if (trimmed == 'false') return false;
-
-    // Check for data variable existence
-    if (trimmed.startsWith('!')) {
-      final varName = trimmed.substring(1).trim();
-      return context.data[varName] == null;
-    }
-
-    // Check for data variable truthy
-    final value = context.data[trimmed];
-    if (value == null) return false;
-    if (value is bool) return value;
-    if (value is String) return value.isNotEmpty;
-    if (value is num) return value != 0;
-    return true;
-  }
-
-  void _startTimeout(String executionId, WorkflowState state) {
-    // Timeout handling would be implemented here
-    // Using a timer to trigger timeout action
-  }
-
-  void _emitEvent(WorkflowEvent event) {
-    _listener?.onEvent(event);
-  }
+  List<WorkflowExecution> listActiveExecutions() => [];
 }
 
 /// Workflow execution.
 class WorkflowExecution {
-  /// Workflow definition.
-  final Workflow workflow;
-
-  /// Execution context.
-  final WorkflowContext context;
+  /// Workflow definition (dynamic for backward compatibility).
+  final dynamic workflow;
 
   /// Execution status.
   WorkflowStatus status;
@@ -458,7 +70,6 @@ class WorkflowExecution {
 
   WorkflowExecution({
     required this.workflow,
-    required this.context,
     required this.status,
     required this.startedAt,
     this.completedAt,
@@ -477,14 +88,14 @@ enum WorkflowStatus {
   /// Currently running.
   running,
 
-  /// Waiting for input.
-  waiting,
-
   /// Successfully completed.
   completed,
 
   /// Failed.
   failed,
+
+  /// Paused (awaiting resume).
+  paused,
 
   /// Cancelled.
   cancelled,

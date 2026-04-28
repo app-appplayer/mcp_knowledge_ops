@@ -3,6 +3,11 @@
 /// Defines the handler interface and registry for pipeline stage execution.
 library;
 
+import '../execution/handler_registry.dart' show HandlerContext;
+
+/// Re-export HandlerContext for consumers of this file.
+export '../execution/handler_registry.dart' show HandlerContext;
+
 /// Base interface for pipeline stage handlers.
 abstract class PipelineHandler<TInput, TOutput> {
   /// Unique handler identifier.
@@ -17,6 +22,12 @@ abstract class PipelineHandler<TInput, TOutput> {
   /// Required capabilities/dependencies.
   List<String> get requires;
 
+  /// JSON Schema describing the expected input format.
+  Map<String, dynamic> get inputSchema;
+
+  /// JSON Schema describing the output format.
+  Map<String, dynamic> get outputSchema;
+
   /// Execute the handler.
   Future<TOutput> execute(TInput input, HandlerContext context);
 
@@ -25,36 +36,6 @@ abstract class PipelineHandler<TInput, TOutput> {
 
   /// Cleanup resources after execution.
   Future<void> cleanup(HandlerContext context) async {}
-}
-
-/// Context for handler execution.
-class HandlerContext {
-  /// Run identifier.
-  final String runId;
-
-  /// Stage identifier.
-  final String stageId;
-
-  /// Pipeline identifier.
-  final String pipelineId;
-
-  /// Trace identifier.
-  final String? traceId;
-
-  /// Point in time for execution.
-  final DateTime asOf;
-
-  /// Handler configuration.
-  final Map<String, dynamic> config;
-
-  const HandlerContext({
-    required this.runId,
-    required this.stageId,
-    required this.pipelineId,
-    this.traceId,
-    required this.asOf,
-    this.config = const {},
-  });
 }
 
 /// Validation result.
@@ -123,7 +104,35 @@ class PipelineHandlerRegistry {
       version: h.version,
       namespace: h.id.split('.').first,
       requires: h.requires,
+      inputSchema: h.inputSchema,
+      outputSchema: h.outputSchema,
     )).toList();
+  }
+
+  /// Validate that a handler exists and optionally check required fields.
+  ValidationResult validate(String handlerId, {List<String>? required}) {
+    final handler = _handlers[handlerId];
+    if (handler == null) {
+      return ValidationResult.invalid(
+        ['Handler not found: $handlerId'],
+      );
+    }
+
+    if (required != null && required.isNotEmpty) {
+      final errors = <String>[];
+      final schema = handler.inputSchema;
+      final schemaProperties = schema['properties'] as Map<String, dynamic>?;
+      for (final field in required) {
+        if (schemaProperties == null || !schemaProperties.containsKey(field)) {
+          errors.add('Required field "$field" not found in input schema for $handlerId');
+        }
+      }
+      if (errors.isNotEmpty) {
+        return ValidationResult.invalid(errors);
+      }
+    }
+
+    return ValidationResult.valid();
   }
 
   /// Find handlers by pattern.
@@ -177,12 +186,20 @@ class HandlerInfo {
   /// Required dependencies.
   final List<String> requires;
 
+  /// JSON Schema describing the expected input format.
+  final Map<String, dynamic> inputSchema;
+
+  /// JSON Schema describing the output format.
+  final Map<String, dynamic> outputSchema;
+
   const HandlerInfo({
     required this.id,
     required this.name,
     required this.version,
     required this.namespace,
     this.requires = const [],
+    this.inputSchema = const {},
+    this.outputSchema = const {},
   });
 
   Map<String, dynamic> toJson() => {
@@ -191,6 +208,8 @@ class HandlerInfo {
         'version': version,
         'namespace': namespace,
         if (requires.isNotEmpty) 'requires': requires,
+        if (inputSchema.isNotEmpty) 'inputSchema': inputSchema,
+        if (outputSchema.isNotEmpty) 'outputSchema': outputSchema,
       };
 }
 
@@ -205,6 +224,10 @@ class FunctionHandler<TInput, TOutput>
   final String version;
   @override
   final List<String> requires;
+  @override
+  final Map<String, dynamic> inputSchema;
+  @override
+  final Map<String, dynamic> outputSchema;
 
   final Future<TOutput> Function(TInput input, HandlerContext context) _fn;
 
@@ -213,6 +236,8 @@ class FunctionHandler<TInput, TOutput>
     required this.name,
     this.version = '1.0.0',
     this.requires = const [],
+    this.inputSchema = const {},
+    this.outputSchema = const {},
     required Future<TOutput> Function(TInput input, HandlerContext context) fn,
   }) : _fn = fn;
 

@@ -1,14 +1,17 @@
-/// Pattern Mining Pipeline - Pipeline for discovering patterns in facts.
+/// Pattern Mining Pipeline - Declarative stage spec for pattern mining.
 ///
-/// Analyzes facts to discover recurring patterns, relationships,
-/// and potential skill/profile opportunities.
+/// Per REDESIGN-PLAN.md Phase 7 (no-legacy), this class holds no direct
+/// references to `FactGraphPort`, `SkillPort`, or `ProfilePort`. Handlers
+/// reach the standard ports (`FactsPort`, `SkillRuntimePort`,
+/// `AppraisalPort`, `DecisionPort`, `MetricsPort`, `PhilosophyPort`) via
+/// `HandlerContext.ports`.
 library;
 
 import '../pipeline.dart';
-import '../../ports/ops_port.dart';
 
 /// Pipeline for mining patterns from facts.
-class PatternMiningPipeline implements Pipeline<PatternMiningInput, PatternMiningOutput> {
+class PatternMiningPipeline
+    implements Pipeline<PatternMiningInput, PatternMiningOutput> {
   @override
   final String id;
 
@@ -27,20 +30,12 @@ class PatternMiningPipeline implements Pipeline<PatternMiningInput, PatternMinin
   @override
   final PipelineConfig config;
 
-  /// Fact graph port.
-  final FactGraphPort factGraph;
-
-  /// LLM port for analysis.
-  final OpsLlmPort? llm;
-
   PatternMiningPipeline({
     String? id,
     this.name = 'Pattern Mining Pipeline',
     this.version = '1.0.0',
     this.description = 'Discover patterns in accumulated facts',
     PipelineConfig? config,
-    required this.factGraph,
-    this.llm,
   })  : id = id ?? 'pattern_mining_pipeline',
         stages = _buildStages(),
         config = config ??
@@ -53,43 +48,93 @@ class PatternMiningPipeline implements Pipeline<PatternMiningInput, PatternMinin
   static List<PipelineStage> _buildStages() {
     return [
       const PipelineStage(
-        id: 'extract_features',
-        name: 'Extract Features',
+        id: 'collect_signals',
+        name: 'Collect Signals',
         order: 1,
-        handler: 'pattern.extract_features',
-        description: 'Extract feature vectors from facts',
+        handler: 'mining.collectSignals',
+        description: 'Gather signals via FactsPort.queryFacts within time window',
       ),
       const PipelineStage(
-        id: 'reduce_dimensions',
-        name: 'Reduce Dimensions',
+        id: 'preprocess',
+        name: 'Preprocess Data',
         order: 2,
-        handler: 'pattern.reduce_dimensions',
-        inputMapping: {'features': 'extract_features'},
-        description: 'Apply dimensionality reduction',
+        handler: 'mining.preprocess',
+        inputMapping: {'signals': 'collect_signals'},
+        description: 'Normalize collected data (pure)',
       ),
       const PipelineStage(
-        id: 'cluster',
-        name: 'Cluster',
+        id: 'cluster_signals',
+        name: 'Cluster Signals',
         order: 3,
-        handler: 'pattern.cluster',
-        inputMapping: {'reducedFeatures': 'reduce_dimensions'},
-        description: 'Cluster similar facts',
+        handler: 'mining.cluster',
+        inputMapping: {'preprocessed': 'preprocess'},
+        description: 'Group similar signals using Clustering.kmeans (pure)',
       ),
       const PipelineStage(
-        id: 'analyze_clusters',
-        name: 'Analyze Clusters',
+        id: 'extract_patterns',
+        name: 'Extract Patterns',
         order: 4,
-        handler: 'pattern.analyze',
-        inputMapping: {'clusters': 'cluster'},
-        description: 'Analyze clusters for patterns',
+        handler: 'mining.extract',
+        inputMapping: {'clusters': 'cluster_signals'},
+        description: 'Identify recurring patterns from clusters',
+      ),
+      const PipelineStage(
+        id: 'validate_patterns',
+        name: 'Validate Patterns',
+        order: 5,
+        handler: 'mining.validate',
+        inputMapping: {'patterns': 'extract_patterns'},
+        description: 'Validate patterns via AppraisalPort.appraise',
+      ),
+      const PipelineStage(
+        id: 'philosophy_validate',
+        name: 'Philosophy Validate',
+        order: 6,
+        handler: 'philosophy.checkProhibitions',
+        inputMapping: {'validatedPatterns': 'validate_patterns'},
+        condition: 'ports.philosophy != null',
+        description:
+            'Validate patterns via PhilosophyPort.checkProhibitions',
+      ),
+      const PipelineStage(
+        id: 'generate_skill_candidates',
+        name: 'Generate Skill Candidates',
+        order: 7,
+        handler: 'mining.generateSkillCandidates',
+        inputMapping: {'validatedPatterns': 'philosophy_validate'},
+        condition:
+            "config.generateSkills && pattern.type in ['procedure', 'workflow']",
+        description:
+            'Generate candidate skills via SkillRuntimePort.executeSkill',
+      ),
+      const PipelineStage(
+        id: 'generate_profile_candidates',
+        name: 'Generate Profile Candidates',
+        order: 8,
+        handler: 'mining.generateProfileCandidates',
+        inputMapping: {'validatedPatterns': 'philosophy_validate'},
+        condition:
+            "config.generateProfiles && pattern.type in ['evaluation', 'decision']",
+        description:
+            'Generate candidate profiles via AppraisalPort.appraise + DecisionPort.decide',
       ),
       const PipelineStage(
         id: 'store_patterns',
         name: 'Store Patterns',
-        order: 5,
-        handler: 'pattern.store',
-        inputMapping: {'patterns': 'analyze_clusters'},
-        description: 'Store discovered patterns',
+        order: 9,
+        handler: 'mining.storePattern',
+        inputMapping: {'patterns': 'philosophy_validate'},
+        description:
+            'Store patterns as facts via FactsPort.writeFacts (type: pattern)',
+      ),
+      const PipelineStage(
+        id: 'emit_notifications',
+        name: 'Emit Notifications',
+        order: 10,
+        handler: 'ops.notify',
+        inputMapping: {'storedPatterns': 'store_patterns'},
+        condition: 'config.notifyOnDiscovery',
+        description: 'Notify stakeholders via NotificationPort (optional)',
       ),
     ];
   }
@@ -99,289 +144,136 @@ class PatternMiningPipeline implements Pipeline<PatternMiningInput, PatternMinin
     PatternMiningInput input,
     PipelineContext context,
   ) async {
-    final startTime = DateTime.now();
-    final stageResults = <StageResult>[];
-
-    try {
-      // Stage 1: Extract features from facts
-      // This would typically involve:
-      // - Fetching facts from the specified period
-      // - Converting them to feature vectors
-      final features = await _extractFeatures(input);
-      stageResults.add(StageResult(
-        stageId: 'extract_features',
-        status: StageStatus.completed,
-        startedAt: startTime,
-        completedAt: DateTime.now(),
-        output: features,
-      ));
-
-      if (features.isEmpty) {
-        return PipelineResult.success(
-          output: const PatternMiningOutput(
-            factCount: 0,
-            patternCount: 0,
-            clusterCount: 0,
-          ),
-          stages: stageResults,
-          metrics: _buildMetrics(stageResults, startTime),
-        );
-      }
-
-      // Stage 2: Reduce dimensions
-      final reduced = _reduceDimensions(features, input.algorithm);
-      stageResults.add(StageResult(
-        stageId: 'reduce_dimensions',
-        status: StageStatus.completed,
-        startedAt: DateTime.now(),
-        completedAt: DateTime.now(),
-        output: reduced,
-      ));
-
-      // Stage 3: Cluster
-      final clusters = _cluster(reduced, input.algorithm);
-      stageResults.add(StageResult(
-        stageId: 'cluster',
-        status: StageStatus.completed,
-        startedAt: DateTime.now(),
-        completedAt: DateTime.now(),
-        output: clusters,
-      ));
-
-      // Stage 4: Analyze clusters for patterns
-      final patterns = await _analyzeClusters(clusters);
-      stageResults.add(StageResult(
-        stageId: 'analyze_clusters',
-        status: StageStatus.completed,
-        startedAt: DateTime.now(),
-        completedAt: DateTime.now(),
-        output: patterns,
-      ));
-
-      // Stage 5: Store patterns
-      final storedPatterns = <String>[];
-      for (final pattern in patterns) {
-        final patternId = await factGraph.storePattern(pattern);
-        storedPatterns.add(patternId);
-      }
-
-      stageResults.add(StageResult(
-        stageId: 'store_patterns',
-        status: StageStatus.completed,
-        startedAt: DateTime.now(),
-        completedAt: DateTime.now(),
-        output: storedPatterns,
-      ));
-
-      return PipelineResult.success(
-        output: PatternMiningOutput(
-          factCount: features.length,
-          patternCount: patterns.length,
-          clusterCount: clusters.length,
-          patternIds: storedPatterns,
-          clusterSizes: clusters.map((c) => c.members.length).toList(),
+    return PipelineResult.success(
+      output: PatternMiningOutput(
+        patternsDiscovered: const [],
+        candidateSkills: const [],
+        candidateProfiles: const [],
+        statistics: const MiningStatistics(
+          signalsAnalyzed: 0,
+          clustersFound: 0,
+          patternsExtracted: 0,
+          duration: Duration.zero,
         ),
-        stages: stageResults,
-        metrics: _buildMetrics(stageResults, startTime),
-      );
-    } catch (e) {
-      return PipelineResult.failure(
-        error: PipelineError(
-          code: 'PATTERN_MINING_ERROR',
-          message: e.toString(),
-        ),
-        stages: stageResults,
-        metrics: _buildMetrics(stageResults, startTime),
-      );
-    }
-  }
-
-  Future<List<FeatureVector>> _extractFeatures(PatternMiningInput input) async {
-    // Simplified feature extraction
-    // In a real implementation, this would:
-    // 1. Query facts from factGraph for the period
-    // 2. Convert each fact to a feature vector using embeddings or structured extraction
-    return [];
-  }
-
-  List<FeatureVector> _reduceDimensions(
-    List<FeatureVector> features,
-    ClusteringAlgorithm algorithm,
-  ) {
-    // Simplified dimensionality reduction
-    // In a real implementation, use PCA, t-SNE, or UMAP
-    return features;
-  }
-
-  List<Cluster> _cluster(
-    List<FeatureVector> features,
-    ClusteringAlgorithm algorithm,
-  ) {
-    // Simplified clustering
-    // In a real implementation:
-    switch (algorithm) {
-      case ClusteringAlgorithm.dbscan:
-        return _dbscanCluster(features);
-      case ClusteringAlgorithm.hdbscan:
-        return _hdbscanCluster(features);
-      case ClusteringAlgorithm.kmeans:
-        return _kmeansCluster(features);
-      case ClusteringAlgorithm.hierarchical:
-        return _hierarchicalCluster(features);
-    }
-  }
-
-  List<Cluster> _dbscanCluster(List<FeatureVector> features) {
-    // DBSCAN implementation placeholder
-    return [];
-  }
-
-  List<Cluster> _hdbscanCluster(List<FeatureVector> features) {
-    // HDBSCAN implementation placeholder
-    return [];
-  }
-
-  List<Cluster> _kmeansCluster(List<FeatureVector> features) {
-    // K-Means implementation placeholder
-    return [];
-  }
-
-  List<Cluster> _hierarchicalCluster(List<FeatureVector> features) {
-    // Hierarchical clustering implementation placeholder
-    return [];
-  }
-
-  Future<List<PatternInput>> _analyzeClusters(List<Cluster> clusters) async {
-    final patterns = <PatternInput>[];
-
-    for (final cluster in clusters) {
-      if (cluster.members.length >= 3) {
-        // Minimum cluster size for pattern
-        patterns.add(PatternInput(
-          type: 'cluster_pattern',
-          criteria: {
-            'centroid': cluster.centroid,
-            'memberCount': cluster.members.length,
-            'cohesion': cluster.cohesion,
-          },
-          confidence: _calculatePatternConfidence(cluster),
-          metadata: {
-            'algorithm': 'auto',
-            'discoveredAt': DateTime.now().toIso8601String(),
-          },
-        ));
-      }
-    }
-
-    return patterns;
-  }
-
-  double _calculatePatternConfidence(Cluster cluster) {
-    // Simple confidence based on cluster cohesion and size
-    final sizeFactor = (cluster.members.length / 10).clamp(0.5, 1.0);
-    return cluster.cohesion * sizeFactor;
-  }
-
-  PipelineMetrics _buildMetrics(
-    List<StageResult> stageResults,
-    DateTime startTime,
-  ) {
-    final stageDurations = <String, Duration>{};
-    for (final result in stageResults) {
-      if (result.duration != null) {
-        stageDurations[result.stageId] = result.duration!;
-      }
-    }
-
-    return PipelineMetrics(
-      totalDuration: DateTime.now().difference(startTime),
-      stageDurations: stageDurations,
-      itemsProcessed: stageResults.length,
-      itemsFailed: stageResults.where((r) => r.status == StageStatus.failed).length,
+      ),
+      stages: const [],
+      metrics: PipelineMetrics.empty(),
     );
   }
 }
 
+/// Scope for pattern mining analysis.
+enum PatternScope { signals, skillRuns, decisions, all }
+
+/// Clustering algorithm options.
+enum ClusteringAlgorithm { dbscan, hdbscan, kmeans, hierarchical }
+
 /// Input for pattern mining pipeline.
 class PatternMiningInput {
-  /// Clustering algorithm to use.
-  final ClusteringAlgorithm algorithm;
-
-  /// Minimum cluster size.
-  final int minClusterSize;
-
-  /// Maximum clusters.
-  final int maxClusters;
-
-  /// Minimum pattern confidence.
+  final PatternScope scope;
+  final Duration timeWindow;
+  final int minOccurrences;
   final double minConfidence;
-
-  /// Period to analyze.
-  final Duration period;
-
-  /// Domain filter.
-  final String? domain;
+  final List<String>? domains;
+  final ClusteringAlgorithm clusteringAlgorithm;
+  final bool generateSkills;
+  final bool generateProfiles;
+  final bool notifyOnDiscovery;
 
   const PatternMiningInput({
-    this.algorithm = ClusteringAlgorithm.hdbscan,
-    this.minClusterSize = 3,
-    this.maxClusters = 100,
+    this.scope = PatternScope.all,
+    this.timeWindow = const Duration(days: 30),
+    this.minOccurrences = 3,
     this.minConfidence = 0.7,
-    this.period = const Duration(days: 30),
-    this.domain,
+    this.domains,
+    this.clusteringAlgorithm = ClusteringAlgorithm.hdbscan,
+    this.generateSkills = true,
+    this.generateProfiles = true,
+    this.notifyOnDiscovery = true,
   });
 }
 
 /// Output of pattern mining pipeline.
 class PatternMiningOutput {
-  /// Facts analyzed.
-  final int factCount;
-
-  /// Patterns discovered.
-  final int patternCount;
-
-  /// Clusters formed.
-  final int clusterCount;
-
-  /// IDs of stored patterns.
-  final List<String> patternIds;
-
-  /// Sizes of clusters.
-  final List<int> clusterSizes;
+  final List<PatternSummary> patternsDiscovered;
+  final List<SkillCandidate> candidateSkills;
+  final List<ProfileCandidate> candidateProfiles;
+  final MiningStatistics statistics;
 
   const PatternMiningOutput({
-    required this.factCount,
-    required this.patternCount,
-    required this.clusterCount,
-    this.patternIds = const [],
-    this.clusterSizes = const [],
+    required this.patternsDiscovered,
+    required this.candidateSkills,
+    required this.candidateProfiles,
+    required this.statistics,
   });
 }
 
-/// Clustering algorithm options.
-enum ClusteringAlgorithm {
-  /// Density-based (DBSCAN).
-  dbscan,
+/// Summary of a discovered pattern.
+class PatternSummary {
+  final String id;
+  final String type;
+  final int frequency;
+  final double confidence;
+  final List<String> examples;
 
-  /// Hierarchical DBSCAN.
-  hdbscan,
-
-  /// K-Means clustering.
-  kmeans,
-
-  /// Hierarchical clustering.
-  hierarchical,
+  const PatternSummary({
+    required this.id,
+    required this.type,
+    required this.frequency,
+    required this.confidence,
+    this.examples = const [],
+  });
 }
 
-/// Feature vector for a fact.
+/// Candidate skill generated from a pattern.
+class SkillCandidate {
+  final String patternId;
+  final String suggestedName;
+  final double estimatedAccuracy;
+  final String skillId;
+
+  const SkillCandidate({
+    required this.patternId,
+    required this.suggestedName,
+    required this.estimatedAccuracy,
+    required this.skillId,
+  });
+}
+
+/// Candidate profile generated from a pattern.
+class ProfileCandidate {
+  final String patternId;
+  final String suggestedName;
+  final double estimatedRelevance;
+  final String profileId;
+
+  const ProfileCandidate({
+    required this.patternId,
+    required this.suggestedName,
+    required this.estimatedRelevance,
+    required this.profileId,
+  });
+}
+
+/// Mining statistics.
+class MiningStatistics {
+  final int signalsAnalyzed;
+  final int clustersFound;
+  final int patternsExtracted;
+  final Duration duration;
+
+  const MiningStatistics({
+    required this.signalsAnalyzed,
+    required this.clustersFound,
+    required this.patternsExtracted,
+    required this.duration,
+  });
+}
+
+/// Feature vector for pattern mining.
 class FeatureVector {
-  /// Source fact ID.
   final String factId;
-
-  /// Feature values.
   final List<double> values;
-
-  /// Feature metadata.
   final Map<String, dynamic> metadata;
 
   const FeatureVector({
@@ -391,21 +283,12 @@ class FeatureVector {
   });
 }
 
-/// A cluster of similar facts.
+/// A cluster of similar signals.
 class Cluster {
-  /// Cluster ID.
   final String id;
-
-  /// Member fact IDs.
   final List<String> members;
-
-  /// Cluster centroid.
   final List<double> centroid;
-
-  /// Cluster cohesion (0-1).
   final double cohesion;
-
-  /// Cluster label.
   final String? label;
 
   const Cluster({
