@@ -299,6 +299,7 @@ class RollbackHandler {
   ) async {
     final kvStorage = _ports.kvStorage;
 
+    // ignore: unnecessary_null_comparison
     if (kvStorage == null) {
       throw ResourceException(
         'KvStoragePort is required for rollback operations',
