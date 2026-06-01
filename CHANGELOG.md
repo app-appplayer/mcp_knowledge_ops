@@ -1,3 +1,20 @@
+## [0.2.2] - 2026-05-30 - Behavior definition execution engine (additive)
+
+### Added
+- `lib/src/behavior/` — new module: unified behavior definition execution engine.
+  - `BehaviorEngine` — runner; takes a `List<BehaviorStep>` (engine-native) plus an initial state map via `run(runId, steps, state)` and executes step-by-step, evaluating guards and routing outcomes. Engine-native types only — no `mcp_bundle` dependency (hosts map their bundle section to `BehaviorStep`).
+  - `BehaviorRunnable` — per-activation handle returned by `BehaviorEngine.run`; supports `resume(runId, {statePatch})` for suspended runs (the optional `statePatch` is merged into the run state before re-evaluating the waiting guard — e.g. `{approved: true}` unblocks an approval gate).
+  - `BehaviorStep` — runtime step record (id, status, result, error).
+  - `Guard` — evaluates a step's `when` expression against `StateStore` entries; returns the outcome key used for `then` routing.
+  - `Outcome` — registry of named outcomes (`proceed`, `skip`, `wait`, `stop`, `goto:<id>`) plus host-registered custom outcomes.
+  - `StateStore` — abstract key/value store interface with two concrete implementations: `EphemeralStateStore` (in-memory, per-run) and `KvStateStore` (durable, backed by a `KvPort` for suspend/resume across restarts).
+- `OpsRuntime.behaviorRegistry` — `Map<String, BehaviorRunnable Function()>` field (default empty map, additive). Hosts (brain_kernel `BundleActivation`) populate this map at bundle activation time; `bk.behavior.*` tools dispatch through it.
+- Barrel export of the behavior module added to `lib/mcp_knowledge_ops.dart`.
+- 17 new regression tests. Total: 1081 PASS.
+
+### Backward compatibility
+- Fully additive. `OpsRuntime.fromConsumedPorts` default for `behaviorRegistry` is `const {}`. No existing field, adapter, or execution path changed. `^0.2.1` caret consumers resolve `0.2.2` automatically.
+
 ## [0.2.1] - 2026-05-23 - mcp_bundle 0.4.0 cascade
 
 ### Changed (cascade)

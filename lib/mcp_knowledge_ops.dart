@@ -55,6 +55,9 @@ export 'src/observability/observability.dart' hide PipelineMetrics, WorkflowMetr
 // Runbooks (new)
 export 'src/runbooks/runbooks.dart';
 
+// Behavior definition — unified execution engine (flow/pipeline/runbook successor)
+export 'src/behavior/behavior.dart';
+
 // Pipeline infrastructure (existing - hide duplicates)
 export 'src/pipeline/pipeline.dart' hide PipelineResult, PipelineMetrics, PipelineError, StageResult, StageStatus, RetryConfig;
 export 'src/pipeline/pipeline_executor.dart' hide PipelineStartedEvent, PipelineCompletedEvent, PipelineFailedEvent, StageStartedEvent, StageCompletedEvent, StageFailedEvent;

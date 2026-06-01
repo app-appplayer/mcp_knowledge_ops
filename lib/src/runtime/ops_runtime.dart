@@ -13,6 +13,7 @@ import '../execution/handler_registry.dart';
 import '../observability/audit_recorder.dart';
 import '../ports/ops_port.dart';
 import '../runbooks/runbook.dart';
+import '../behavior/behavior_runnable.dart';
 import '../runbooks/runbook_executor.dart';
 import '../scheduler/scheduler.dart';
 import '../pipeline/pipelines/curation_pipeline.dart';
@@ -71,6 +72,11 @@ class OpsRuntime {
   /// Runbook id → factory.
   final Map<String, Runbook Function()> runbookRegistry;
 
+  /// Behavior definition id → runnable factory. The behavior-category
+  /// counterpart to the workflow/runbook registries; hosts register
+  /// activated `bundle.behavior` definitions here. Empty unless populated.
+  final Map<String, BehaviorRunnable Function()> behaviorRegistry;
+
   // ── provided-port adapters ──
 
   final WorkflowPortAdapter workflowAdapter;
@@ -89,6 +95,7 @@ class OpsRuntime {
     required this.workflowRegistry,
     required this.pipelineRegistry,
     required this.runbookRegistry,
+    this.behaviorRegistry = const {},
     required this.workflowAdapter,
     required this.pipelineAdapter,
     required this.schedulerAdapter,
@@ -129,6 +136,10 @@ class OpsRuntime {
     // legacy [StandardRunbooks] API returned shapes that do not match the
     // canonical [Runbook] type and is not used here.
     final runbookRegistry = <String, Runbook Function()>{};
+
+    // 3b. Behavior registry — empty; hosts register activated
+    // `bundle.behavior` definitions after construction.
+    final behaviorRegistry = <String, BehaviorRunnable Function()>{};
 
     // 4. Adapter instances — the workflow/pipeline adapters are
     // constructed first so the scheduler-dispatch closure can reference
@@ -258,6 +269,7 @@ class OpsRuntime {
       workflowRegistry: workflowRegistry,
       pipelineRegistry: pipelineRegistry,
       runbookRegistry: runbookRegistry,
+      behaviorRegistry: behaviorRegistry,
       workflowAdapter: workflowAdapter,
       pipelineAdapter: pipelineAdapter,
       schedulerAdapter: schedulerAdapter,
