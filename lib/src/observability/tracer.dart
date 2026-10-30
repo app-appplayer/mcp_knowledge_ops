@@ -2,6 +2,7 @@
 ///
 /// Provides tracing for pipeline and workflow execution.
 library;
+import '../id_generator.dart';
 
 /// Tracer for distributed tracing.
 class Tracer {
@@ -84,9 +85,7 @@ class Tracer {
   }
 
   String _generateId(String prefix) {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = timestamp.hashCode.abs() % 10000;
-    return '${prefix}_${timestamp}_$random';
+    return generateId(prefix);
   }
 }
 
@@ -186,9 +185,7 @@ class Span {
 
   /// Generate a unique span ID.
   static String _generateSpanId() {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = timestamp.hashCode.abs() % 10000;
-    return 'span_${timestamp}_$random';
+    return generateId('span');
   }
 
   /// Record error.

@@ -5,6 +5,7 @@
 library;
 
 import 'stage.dart';
+import '../id_generator.dart';
 
 /// Context passed through execution stages.
 class ExecutionContext {
@@ -186,15 +187,11 @@ class ExecutionContext {
   }
 
   static String _generateCheckpointId() {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = timestamp.hashCode.abs() % 10000;
-    return 'cp_${timestamp}_$random';
+    return generateId('cp');
   }
 
   static String _generateTraceId() {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = timestamp.hashCode.abs() % 10000;
-    return 'trace_${timestamp}_$random';
+    return generateId('trace');
   }
 }
 

@@ -8,6 +8,7 @@ import 'package:mcp_bundle/src/ports/runbook_port.dart' as port;
 
 import '../runbooks/runbook.dart';
 import '../runbooks/runbook_executor.dart';
+import '../id_generator.dart';
 
 /// Adapter wrapping a [RunbookExecutor] and a runbook registry to expose
 /// the standard [port.RunbookPort] contract.
@@ -38,7 +39,7 @@ class RunbookPortAdapter implements port.RunbookPort {
   ) async {
     final factory = registry[id];
     final startedAt = DateTime.now();
-    final executionId = 'rb-${startedAt.microsecondsSinceEpoch}';
+    final executionId = generateId('rb', separator: '-');
 
     if (factory == null) {
       return port.RunbookExecution(

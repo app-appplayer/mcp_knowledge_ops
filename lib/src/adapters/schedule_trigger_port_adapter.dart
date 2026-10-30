@@ -7,6 +7,7 @@ library;
 import 'package:mcp_bundle/src/ports/schedule_trigger_port.dart';
 
 import '../scheduler/scheduler.dart';
+import '../id_generator.dart';
 
 /// Adapter exposing the internal [Scheduler] via the standard
 /// [ScheduleTriggerPort] contract.
@@ -31,7 +32,7 @@ class ScheduleTriggerPortAdapter implements ScheduleTriggerPort {
   @override
   Future<String> schedule(String cron, ScheduleTarget target) async {
     final taskId =
-        'sched-${DateTime.now().microsecondsSinceEpoch}-${target.kind}-${target.id}';
+        '${generateId('sched', separator: '-')}-${target.kind}-${target.id}';
     await scheduler.register(
       taskId: taskId,
       trigger: CronTrigger(cron, id: taskId),

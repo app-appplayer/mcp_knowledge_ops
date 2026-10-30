@@ -9,6 +9,7 @@ import '../workflow.dart';
 import '../../models/execution_result.dart';
 import '../../models/stage.dart';
 import '../../models/gate.dart';
+import '../../id_generator.dart';
 
 // ---------------------------------------------------------------------------
 // Placeholder types
@@ -227,7 +228,7 @@ class ProfileBuildWorkflow
     // Declarative stub — see SkillBuildWorkflow.run for rationale.
     return WorkflowResult.success(
       output: ProfileBuildOutput(
-        profileId: 'profile-${DateTime.now().microsecondsSinceEpoch}',
+        profileId: generateId('profile', separator: '-'),
         version: version,
         bundle: const ProfileBundle(
           id: '',

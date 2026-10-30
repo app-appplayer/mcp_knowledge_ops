@@ -7,6 +7,7 @@ library;
 import 'package:mcp_bundle/src/ports/pipeline_port.dart';
 
 import '../pipeline/pipeline.dart';
+import '../id_generator.dart';
 
 /// Decoder from a map input to a pipeline's typed `TInput`.
 typedef PipelineInputDecoder = dynamic Function(Map<String, dynamic> input);
@@ -38,7 +39,7 @@ class PipelinePortAdapter implements PipelinePort {
   ) async {
     final factory = registry[id];
     final startedAt = DateTime.now();
-    final runId = 'pipe-${startedAt.microsecondsSinceEpoch}';
+    final runId = generateId('pipe', separator: '-');
 
     if (factory == null) {
       final handle = PipelineRunHandle(

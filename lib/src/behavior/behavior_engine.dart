@@ -12,6 +12,8 @@
 /// (ephemeral vs. durable) differs.
 library;
 
+import 'package:mcp_bundle/mcp_bundle.dart' show renderInterpolatedValue;
+
 import 'behavior_step.dart';
 import 'guard.dart';
 import 'outcome.dart';
@@ -153,7 +155,8 @@ class BehaviorEngine {
         case ControlPrimitive.goto:
           if (signal.runAction && step.action != null) {
             try {
-              final out = await dispatch(step.action!, state);
+              final out =
+                  await dispatch(await _renderAction(step.action!, state), state);
               if (out != null) {
                 state.addAll(out);
                 state[step.id] = out;
@@ -186,6 +189,25 @@ class BehaviorEngine {
     }
 
     return _finish(start, state, completed, BehaviorRunStatus.completed);
+  }
+
+  /// The action with `${...}` in its arguments filled from [state] (bundle
+  /// spec 11 §11.7): a string that is exactly one `${path}` takes the value at
+  /// that state path with its type, any other string is rendered as text, and
+  /// a path with no value renders as nothing. `\$` keeps a literal dollar
+  /// sign. Maps and lists are walked at any depth.
+  Future<BehaviorAction> _renderAction(
+    BehaviorAction action,
+    Map<String, dynamic> state,
+  ) async {
+    if (action.args.isEmpty) return action;
+    final rendered = await renderInterpolatedValue(
+        action.args, (expression) => guard.evaluate(expression, state));
+    return BehaviorAction(
+      kind: action.kind,
+      ref: action.ref,
+      args: Map<String, dynamic>.from(rendered as Map),
+    );
   }
 
   Future<EngineResult> _finish(

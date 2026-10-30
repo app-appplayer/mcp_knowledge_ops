@@ -8,6 +8,7 @@ import '../workflow.dart';
 import '../../models/execution_result.dart';
 import '../../models/stage.dart';
 import '../../models/gate.dart';
+import '../../id_generator.dart';
 
 // ---------------------------------------------------------------------------
 // Placeholder types
@@ -203,7 +204,7 @@ class SkillBuildWorkflow extends Workflow<SkillBuildInput, SkillBuildOutput> {
     // inspect the workflow (adapters, tests) keep compiling.
     return WorkflowResult.success(
       output: SkillBuildOutput(
-        skillId: 'skill-${DateTime.now().microsecondsSinceEpoch}',
+        skillId: generateId('skill', separator: '-'),
         version: version,
         bundle: const SkillBundle(
           id: '',

@@ -8,6 +8,7 @@ import 'package:mcp_bundle/src/ports/approval_port.dart';
 import '../models/execution_result.dart';
 import '../execution/handler_registry.dart';
 import 'runbook.dart';
+import '../id_generator.dart';
 
 /// Runbook executor.
 class RunbookExecutor {
@@ -575,7 +576,7 @@ class RunbookExecutor {
     final timeoutSeconds = action.config['timeout'] as int?;
 
     final result = await _approvalPort!.requestApproval(ApprovalRequest(
-      requestId: '${context.runId}_approval_${DateTime.now().millisecondsSinceEpoch}',
+      requestId: generateId('${context.runId}_approval'),
       requestType: 'runbook_step',
       requesterId: context.workspaceId,
       description: action.config['description'] as String? ?? 'Runbook approval required',

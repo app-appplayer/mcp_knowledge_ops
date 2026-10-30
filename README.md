@@ -6,29 +6,39 @@ A stateless orchestration layer for MakeMind. Coordinates pipelines, workflows, 
 
 ## Components
 
-- **Execution Engine** — central coordinator for pipeline / workflow runs.
-- **Pipelines** — staged data processing with gates and metrics. Built-in pipelines: curation, summary refresh, pattern mining, ingest, index rebuild, cascade refresh, clustering.
-- **Workflows** — long-running build/release flows with reviews, approval routing, and cancellation.
-- **Scheduler** — cron / event / deadline triggers, MCP tools integration, scheduler events.
-- **Runbooks** — operational procedures.
-- **Observability** — logging, metrics, tracing, structured events.
-- **Standard port adapters** — implements `mcp_bundle` ops Contract Layer (workflow / pipeline / runbook / runs / schedule trigger / audit).
+- **Execution Engine** — runs pipeline / workflow definitions: stages with retry and failure policies, gates, checkpoints with resume, review / approval stages through the `ApprovalPort`, parallel execution.
+- **Pipelines and workflows** — declarative specifications (ingest, curation, summary refresh, pattern mining, index rebuild; skill, profile and bundle build); their `run()` is a placeholder, the host builds engine definitions and registers the stage handlers.
+- **Scheduler** — cron (`*` or exact numbers per field), event, deadline, manual and composite triggers with timeout, concurrency and de-duplication.
+- **Runbooks** — operational procedures with variables, checks and approvals.
+- **Behavior engine** — guard / outcome based step runner with suspend and resume.
+- **Events, observability** — event toolkit (publisher, subscriber, router, store, replay, dead letters, reliability) and logging, metrics, tracing, audit, alerts, health checks as independent tools.
+- **Standard port adapters** — `OpsRuntime` provides `WorkflowPort`, `PipelinePort`, `ScheduleTriggerPort`, `AuditPort` and `RunbookPort` from the `mcp_bundle` contract layer.
 
 ## Quick Start
 
 ```dart
 import 'package:mcp_knowledge_ops/mcp_knowledge_ops.dart';
 
-final handlers = HandlerRegistry();
-handlers.register('myHandler', MyHandler());
+// 1. Run a definition on the engine.
+final handlers = HandlerRegistry()
+  ..register('myHandler', MyHandler());
 
 final engine = ExecutionEngine(
-  config: ExecutionEngineConfig(),
+  config: const ExecutionEngineConfig(),
   handlers: handlers,
 );
 
-final result = await engine.executePipeline(pipeline, input, context);
+final result = await engine.executePipeline(definition, input, context);
+
+// 2. Or assemble the whole runtime from your ports. The built-in pipelines
+// are specifications: runPipeline calls their placeholder run(), so use the
+// runtime's engine with your own definition to execute stages.
+final runtime = OpsRuntime.fromConsumedPorts(consumedPorts);
+runtime.handlers.register('myHandler', MyHandler());
+final result2 = await runtime.engine.executePipeline(definition, input, context);
 ```
+
+See `docs/` for the requirements, design, test lists and operations guides.
 
 ## Support
 

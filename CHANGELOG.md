@@ -1,3 +1,18 @@
+## [0.3.0] - 2026-10-31 - Behavior action arguments filled from the run state, unique ids
+
+### Breaking
+Under the 0.x compatibility rule this makes the release a minor. Consumers on `^0.2.x` keep the old behaviour until they raise their floor.
+- The behavior engine fills `${...}` in a step action's arguments from the run state before it dispatches (bundle spec 11 §11.7). It used to hand the arguments over exactly as written, so an argument that happens to contain `${...}` (for example a shell snippet) now changes; write `\${...}` to keep it literal.
+
+### Added
+- A string argument that is exactly one `${path}` takes the value at that state path with its type; any other string is rendered as text; a path with no value is `null` alone and nothing inside text. Maps and lists are walked at any depth, including a skill action's `inputs`. A step reads an earlier step's output by its id (`${fetch.score}`) or by a merged key. The action given to the dispatcher is a new object; the step definition is not changed.
+
+### Changed (dependency floor)
+- `mcp_bundle` floor raised to `^0.4.12`.
+
+### Fixed
+- Ids built from the clock alone (checkpoint, trace, span, audit, run, schedule, approval request and build ids) repeated when two records were made in the same tick, and a store replaced the earlier record without an error. They now come from one process-wide generator, `<prefix><sep><microseconds><sep><sequence>`; prefixes and separators are unchanged.
+
 ## [0.2.2] - 2026-05-30 - Behavior definition execution engine (additive)
 
 ### Added

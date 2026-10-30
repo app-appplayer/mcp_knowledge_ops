@@ -9,6 +9,7 @@ import '../workflow.dart';
 import '../../models/execution_result.dart';
 import '../../models/stage.dart';
 import '../../models/gate.dart';
+import '../../id_generator.dart';
 
 // ---------------------------------------------------------------------------
 // Input / Output models
@@ -353,7 +354,7 @@ class BundleBuildWorkflow extends Workflow<BundleBuildInput, BundleBuildOutput> 
     // Declarative stub — see SkillBuildWorkflow.run for rationale.
     return WorkflowResult.success(
       output: BundleBuildOutput(
-        bundleId: 'bundle-${DateTime.now().microsecondsSinceEpoch}',
+        bundleId: generateId('bundle', separator: '-'),
         version: version,
         bundle: const McpBundle(
           id: '',

@@ -5,6 +5,7 @@
 library;
 
 import 'dart:convert';
+import '../id_generator.dart';
 
 // ---------------------------------------------------------------------------
 // Enums
@@ -290,10 +291,8 @@ class AuditEvent {
     String? error,
   }) {
     final now = DateTime.now();
-    final millis = now.millisecondsSinceEpoch;
-    final random = millis.hashCode.abs() % 10000;
     return AuditEvent(
-      id: 'audit_${millis}_$random',
+      id: generateId('audit'),
       timestamp: now,
       actor: actor,
       action: action,

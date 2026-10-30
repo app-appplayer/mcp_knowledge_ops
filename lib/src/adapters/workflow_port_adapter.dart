@@ -7,6 +7,7 @@ library;
 import 'package:mcp_bundle/src/ports/workflow_port.dart';
 
 import '../workflow/workflow.dart';
+import '../id_generator.dart';
 
 /// Decoder from a map input to a workflow's typed `TInput`.
 typedef WorkflowInputDecoder = dynamic Function(Map<String, dynamic> input);
@@ -39,7 +40,7 @@ class WorkflowPortAdapter implements WorkflowPort {
   ) async {
     final factory = registry[id];
     final startedAt = DateTime.now();
-    final runId = 'wf-${startedAt.microsecondsSinceEpoch}';
+    final runId = generateId('wf', separator: '-');
 
     if (factory == null) {
       final handle = WorkflowRunHandle(
