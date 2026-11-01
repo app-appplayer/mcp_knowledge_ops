@@ -215,7 +215,9 @@ class EventCircuitBreaker {
       case CircuitStatus.closed:
         return true;
       case CircuitStatus.open:
-        if (DateTime.now().isAfter(state.resetAt!)) {
+        // `resetAt` itself counts as elapsed: a zero timeout must half-open
+        // at once even on a clock that ticks only every millisecond.
+        if (!DateTime.now().isBefore(state.resetAt!)) {
           _states[handlerName] =
               state.copyWith(status: CircuitStatus.halfOpen);
           return true;

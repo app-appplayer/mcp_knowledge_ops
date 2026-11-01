@@ -208,11 +208,15 @@ class OpsEvent {
 
   /// Generate a unique event identifier.
   static String generateEventId() {
-    final now = DateTime.now();
-    final ts = now.microsecondsSinceEpoch;
-    final hash = ts.hashCode.abs() % 0xFFFFFF;
-    return 'evt_${ts.toRadixString(16)}_${hash.toRadixString(16).padLeft(6, '0')}';
+    final ts = DateTime.now().microsecondsSinceEpoch;
+    // A process-wide counter keeps ids made in the same clock tick apart;
+    // the web clock only ticks every millisecond.
+    _eventIdSequence = (_eventIdSequence + 1) & 0xFFFFFF;
+    return 'evt_${ts.toRadixString(16)}_'
+        '${_eventIdSequence.toRadixString(16).padLeft(6, '0')}';
   }
+
+  static int _eventIdSequence = 0;
 
   /// Convenience factory to create a new event with auto-generated ID and timestamp.
   factory OpsEvent.create({

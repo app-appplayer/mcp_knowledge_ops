@@ -1,3 +1,9 @@
+## [0.3.2] - 2026-11-01 - Event ids and the circuit breaker on the web
+
+### Fixed
+- `OpsEvent.generateEventId` derived the second part of the id from the timestamp, so two ids made in the same clock tick were equal; on the web, where the clock ticks every millisecond, that is routine. The second part is now a process-wide counter, so ids stay unique; the `evt_<hex>_<hex>` shape is unchanged.
+- `EventCircuitBreaker` with a `resetTimeout` of zero stayed open on a clock that ticks every millisecond, because the reset time was compared with `isAfter`. The moment `resetAt` now counts as elapsed.
+
 ## [0.3.1] - 2026-11-01 - Step id on the dispatched action
 
 ### Added
