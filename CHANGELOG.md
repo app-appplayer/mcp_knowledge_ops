@@ -1,3 +1,8 @@
+## [0.3.1] - 2026-11-01 - Step id on the dispatched action
+
+### Added
+- `BehaviorAction.stepId` (optional, not part of the JSON form): the behavior engine sets it on every action it hands to the dispatcher, including after a resume, so the dispatcher can tell which step it is running. An action without arguments is now passed as a copy that carries the step id instead of the same instance.
+
 ## [0.3.0] - 2026-10-31 - Behavior action arguments filled from the run state, unique ids
 
 ### Breaking

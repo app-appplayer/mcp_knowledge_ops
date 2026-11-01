@@ -115,10 +115,12 @@ void main() {
     expect(d.actions.single.args, {'a': 'plain', 'n': 4, 'b': false, 'l': [1]});
   });
 
-  test('an action without arguments is passed as it is', () async {
-    final action = tool('t');
-    final d = await run([BehaviorStep(id: 's', action: action)]);
-    expect(identical(d.actions.single, action), isTrue);
+  test('an action without arguments is passed with the same kind and ref',
+      () async {
+    final d = await run([BehaviorStep(id: 's', action: tool('t'))]);
+    expect(d.actions.single.kind, 'tool');
+    expect(d.actions.single.ref, 't');
+    expect(d.actions.single.args, isEmpty);
   });
 
   test('the kind and ref are kept', () async {

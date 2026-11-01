@@ -155,8 +155,8 @@ class BehaviorEngine {
         case ControlPrimitive.goto:
           if (signal.runAction && step.action != null) {
             try {
-              final out =
-                  await dispatch(await _renderAction(step.action!, state), state);
+              final out = await dispatch(
+                  await _renderAction(step.action!, state, step.id), state);
               if (out != null) {
                 state.addAll(out);
                 state[step.id] = out;
@@ -199,14 +199,18 @@ class BehaviorEngine {
   Future<BehaviorAction> _renderAction(
     BehaviorAction action,
     Map<String, dynamic> state,
+    String stepId,
   ) async {
-    if (action.args.isEmpty) return action;
+    if (action.args.isEmpty) {
+      return BehaviorAction(kind: action.kind, ref: action.ref, stepId: stepId);
+    }
     final rendered = await renderInterpolatedValue(
         action.args, (expression) => guard.evaluate(expression, state));
     return BehaviorAction(
       kind: action.kind,
       ref: action.ref,
       args: Map<String, dynamic>.from(rendered as Map),
+      stepId: stepId,
     );
   }
 

@@ -24,10 +24,16 @@ class BehaviorAction {
   /// Arguments / inputs for the invocation.
   final Map<String, dynamic> args;
 
+  /// The step this action belongs to. The engine fills it on every dispatch
+  /// so the dispatcher can tell which step it is running; null on an action
+  /// built by hand. Runtime context, so it is not part of the JSON form.
+  final String? stepId;
+
   const BehaviorAction({
     required this.kind,
     required this.ref,
     this.args = const {},
+    this.stepId,
   });
 
   factory BehaviorAction.fromJson(Map<String, dynamic> json) {
