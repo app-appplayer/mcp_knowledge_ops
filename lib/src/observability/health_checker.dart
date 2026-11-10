@@ -247,4 +247,3 @@ class HealthChecker {
     return HealthStatus.healthy;
   }
 }
-

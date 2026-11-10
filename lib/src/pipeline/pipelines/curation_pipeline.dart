@@ -57,7 +57,8 @@ class CurationPipeline implements Pipeline<CurationInput, CurationOutput> {
         order: 2,
         handler: 'curation.prioritize',
         inputMapping: {'candidates': 'fetch_candidates'},
-        description: 'Sort candidates by priority (pure via PriorityCalculator)',
+        description:
+            'Sort candidates by priority (pure via PriorityCalculator)',
       ),
       const PipelineStage(
         id: 'enrich_context',

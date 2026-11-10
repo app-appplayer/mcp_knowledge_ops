@@ -11,13 +11,13 @@ library;
 import 'package:mcp_bundle/src/ports/audit_port.dart' as port_audit;
 import 'package:mcp_bundle/src/ports/runbook_port.dart' as port_runbook;
 import 'package:mcp_knowledge_ops/mcp_knowledge_ops.dart';
-import 'package:mcp_knowledge_ops/src/observability/audit_recorder.dart'
-    as obs;
+import 'package:mcp_knowledge_ops/src/observability/audit_recorder.dart' as obs;
 import 'package:test/test.dart';
 
 import 'test_helpers.dart';
 
-class _TestWorkflow implements Workflow<Map<String, dynamic>, Map<String, dynamic>> {
+class _TestWorkflow
+    implements Workflow<Map<String, dynamic>, Map<String, dynamic>> {
   @override
   String get id => 'test_wf';
   @override
@@ -48,7 +48,8 @@ class _TestWorkflow implements Workflow<Map<String, dynamic>, Map<String, dynami
   }
 }
 
-class _ExplodingWorkflow implements Workflow<Map<String, dynamic>, Map<String, dynamic>> {
+class _ExplodingWorkflow
+    implements Workflow<Map<String, dynamic>, Map<String, dynamic>> {
   @override
   String get id => 'exploding_wf';
   @override
@@ -73,7 +74,8 @@ class _ExplodingWorkflow implements Workflow<Map<String, dynamic>, Map<String, d
   }
 }
 
-class _TestPipeline implements Pipeline<Map<String, dynamic>, Map<String, dynamic>> {
+class _TestPipeline
+    implements Pipeline<Map<String, dynamic>, Map<String, dynamic>> {
   @override
   String get id => 'test_pipe';
   @override
@@ -318,7 +320,8 @@ void main() {
       expect(runtime.engine, isA<ExecutionEngine>());
     });
 
-    test('TC-351: toOpsPorts() returns OpsPorts whose provided fields are adapter instances',
+    test(
+        'TC-351: toOpsPorts() returns OpsPorts whose provided fields are adapter instances',
         () {
       final consumed = TestOpsPorts().toConsumedOpsPorts();
       final runtime = OpsRuntime.fromConsumedPorts(consumed);
@@ -349,28 +352,31 @@ void main() {
       final runtime = OpsRuntime.fromConsumedPorts(
         TestOpsPorts().toConsumedOpsPorts(),
       );
-      expect(runtime.workflowRegistry.keys, containsAll(<String>[
-        'skill_build',
-        'profile_build',
-        'bundle_build',
-      ]));
+      expect(
+          runtime.workflowRegistry.keys,
+          containsAll(<String>[
+            'skill_build',
+            'profile_build',
+            'bundle_build',
+          ]));
     });
 
     test('TC-354: registers 5 built-in pipeline factories', () {
       final runtime = OpsRuntime.fromConsumedPorts(
         TestOpsPorts().toConsumedOpsPorts(),
       );
-      expect(runtime.pipelineRegistry.keys, containsAll(<String>[
-        'ingest_pipeline',
-        'curation_pipeline',
-        'summary_refresh_pipeline',
-        'pattern_mining_pipeline',
-        'index_rebuild_pipeline',
-      ]));
+      expect(
+          runtime.pipelineRegistry.keys,
+          containsAll(<String>[
+            'ingest_pipeline',
+            'curation_pipeline',
+            'summary_refresh_pipeline',
+            'pattern_mining_pipeline',
+            'index_rebuild_pipeline',
+          ]));
     });
 
-    test('TC-355: built-in runbook registry starts empty (hosts register)',
-        () {
+    test('TC-355: built-in runbook registry starts empty (hosts register)', () {
       final runtime = OpsRuntime.fromConsumedPorts(
         TestOpsPorts().toConsumedOpsPorts(),
       );
@@ -430,8 +436,7 @@ void main() {
         payload: const {'foo': 'bar'},
         occurredAt: DateTime(2026, 4, 11),
       ));
-      final results =
-          await ports.audit.query(const port_audit.AuditFilter());
+      final results = await ports.audit.query(const port_audit.AuditFilter());
       expect(results.length, equals(1));
       expect(results.first.type, equals('test.event'));
     });
@@ -459,7 +464,8 @@ void main() {
   // The `port_runbook` prefix is used indirectly via the runtime-wired
   // adapters above. This reference keeps the import active for
   // readers following the TEST spec.
-  test('port_runbook prefix is available for tests that need the raw types', () {
+  test('port_runbook prefix is available for tests that need the raw types',
+      () {
     expect(port_runbook.RunbookExecution, isNotNull);
   });
 }

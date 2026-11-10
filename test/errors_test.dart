@@ -11,13 +11,15 @@ void main() {
 
   group('OpsErrorCategory', () {
     test('has all values', () {
-      expect(OpsErrorCategory.values, containsAll([
-        OpsErrorCategory.pipeline,
-        OpsErrorCategory.workflow,
-        OpsErrorCategory.gate,
-        OpsErrorCategory.approval,
-        OpsErrorCategory.execution,
-      ]));
+      expect(
+          OpsErrorCategory.values,
+          containsAll([
+            OpsErrorCategory.pipeline,
+            OpsErrorCategory.workflow,
+            OpsErrorCategory.gate,
+            OpsErrorCategory.approval,
+            OpsErrorCategory.execution,
+          ]));
     });
   });
 
@@ -189,7 +191,11 @@ void main() {
         passed: false,
         conditionResults: [
           const GateConditionResult(conditionId: 'c1', passed: true),
-          const GateConditionResult(conditionId: 'c2', passed: false, actualValue: 50, expectedValue: 80),
+          const GateConditionResult(
+              conditionId: 'c2',
+              passed: false,
+              actualValue: 50,
+              expectedValue: 80),
         ],
         evaluatedAt: DateTime(2024, 1, 1),
       );
@@ -494,7 +500,8 @@ void main() {
 
   group('ErrorResponse', () {
     test('fromException creates response', () {
-      const ex = StageException('Stage failed', stageId: 's1', code: 'OPS-PIPE-004');
+      const ex =
+          StageException('Stage failed', stageId: 's1', code: 'OPS-PIPE-004');
       final response = ErrorResponse.fromException(ex);
       expect(response.code, equals('OPS-PIPE-004'));
       expect(response.retryable, isTrue);

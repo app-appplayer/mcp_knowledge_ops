@@ -98,15 +98,17 @@ class PipelineHandlerRegistry {
       }
     }
 
-    return handlers.map((h) => HandlerInfo(
-      id: h.id,
-      name: h.name,
-      version: h.version,
-      namespace: h.id.split('.').first,
-      requires: h.requires,
-      inputSchema: h.inputSchema,
-      outputSchema: h.outputSchema,
-    )).toList();
+    return handlers
+        .map((h) => HandlerInfo(
+              id: h.id,
+              name: h.name,
+              version: h.version,
+              namespace: h.id.split('.').first,
+              requires: h.requires,
+              inputSchema: h.inputSchema,
+              outputSchema: h.outputSchema,
+            ))
+        .toList();
   }
 
   /// Validate that a handler exists and optionally check required fields.
@@ -124,7 +126,8 @@ class PipelineHandlerRegistry {
       final schemaProperties = schema['properties'] as Map<String, dynamic>?;
       for (final field in required) {
         if (schemaProperties == null || !schemaProperties.containsKey(field)) {
-          errors.add('Required field "$field" not found in input schema for $handlerId');
+          errors.add(
+              'Required field "$field" not found in input schema for $handlerId');
         }
       }
       if (errors.isNotEmpty) {
@@ -140,9 +143,7 @@ class PipelineHandlerRegistry {
     final regex = RegExp(
       pattern.replaceAll('*', '.*').replaceAll('?', '.'),
     );
-    return _handlers.values
-        .where((h) => regex.hasMatch(h.id))
-        .toList();
+    return _handlers.values.where((h) => regex.hasMatch(h.id)).toList();
   }
 
   /// Clear all handlers.

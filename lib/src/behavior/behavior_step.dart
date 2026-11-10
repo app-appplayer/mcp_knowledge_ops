@@ -119,11 +119,10 @@ class BehaviorStep {
               Map<String, dynamic>.from(json['do'] as Map))
           : null,
       when: json['when'] as String?,
-      then: (json['then'] as Map?)
-              ?.map((k, v) => MapEntry('$k', '$v')) ??
+      then: (json['then'] as Map?)?.map((k, v) => MapEntry('$k', '$v')) ??
           const {},
-      dependsOn: (json['dependsOn'] as List?)?.map((e) => '$e').toList() ??
-          const [],
+      dependsOn:
+          (json['dependsOn'] as List?)?.map((e) => '$e').toList() ?? const [],
       onFailure: json['onFailure'] as String?,
     );
   }

@@ -1,3 +1,14 @@
+## [0.4.0] - 2026-11-04 - Cascade refresh reports what it did
+
+### Breaking (behaviour of the same call)
+- `CascadeRefreshExecutor.execute` reported every node refreshed (`success: true`) without refreshing anything. A node is now refreshed by the executor's `NodeRefresher` (`CascadeRefreshExecutor(refresher:)`), reported refreshed only when the refresher returned, and reported failed with the message when it throws. An executor built without a refresher reports every node failed ("No node refresher is configured; nothing was refreshed"), so a caller that relied on the empty success now sees `failedCount` equal to the node count.
+
+### Added
+- `NodeRefresher` typedef and the `refresher` constructor argument.
+
+### Changed (dependency)
+- `mcp_bundle` floor `^0.4.14` (the current release).
+
 ## [0.3.2] - 2026-11-01 - Event ids and the circuit breaker on the web
 
 ### Fixed

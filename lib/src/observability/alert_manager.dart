@@ -343,9 +343,7 @@ class AlertManager {
 
       final triggered = _evaluateCondition(rule.condition);
       final existingAlert = _activeAlerts
-          .where((a) =>
-              a.ruleId == rule.id &&
-              a.state != AlertState.resolved)
+          .where((a) => a.ruleId == rule.id && a.state != AlertState.resolved)
           .firstOrNull;
 
       if (triggered) {
@@ -365,8 +363,7 @@ class AlertManager {
           newAlerts.add(alert);
         }
       } else {
-        if (existingAlert != null &&
-            existingAlert.state == AlertState.firing) {
+        if (existingAlert != null && existingAlert.state == AlertState.firing) {
           existingAlert.state = AlertState.resolved;
           existingAlert.resolvedAt = DateTime.now();
         }
@@ -378,15 +375,12 @@ class AlertManager {
 
   /// Get all active (non-resolved) alerts.
   Future<List<Alert>> getActiveAlerts() async {
-    return _activeAlerts
-        .where((a) => a.state != AlertState.resolved)
-        .toList();
+    return _activeAlerts.where((a) => a.state != AlertState.resolved).toList();
   }
 
   /// Acknowledge an alert.
   Future<void> acknowledgeAlert(String alertId, String userId) async {
-    final alert =
-        _activeAlerts.where((a) => a.id == alertId).firstOrNull;
+    final alert = _activeAlerts.where((a) => a.id == alertId).firstOrNull;
     if (alert != null && alert.state == AlertState.firing) {
       alert.state = AlertState.acknowledged;
       alert.acknowledgedAt = DateTime.now();
@@ -396,8 +390,7 @@ class AlertManager {
 
   /// Resolve an alert.
   Future<void> resolveAlert(String alertId) async {
-    final alert =
-        _activeAlerts.where((a) => a.id == alertId).firstOrNull;
+    final alert = _activeAlerts.where((a) => a.id == alertId).firstOrNull;
     if (alert != null && alert.state != AlertState.resolved) {
       alert.state = AlertState.resolved;
       alert.resolvedAt = DateTime.now();

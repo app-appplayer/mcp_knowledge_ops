@@ -695,7 +695,7 @@ class TestOpsPorts {
     required this.metric,
   });
 
-  factory TestOpsPorts() {
+  factory TestOpsPorts({MockKvStorage? kvStorage}) {
     return TestOpsPorts._(
       facts: MockFactsPort(),
       claims: MockClaimsPort(),
@@ -706,7 +706,7 @@ class TestOpsPorts {
       mcp: MockMcpPort(),
       llm: MockLlmPort(),
       philosophy: MockPhilosophyPort(),
-      kvStorage: MockKvStorage(),
+      kvStorage: kvStorage ?? MockKvStorage(),
       notification: MockNotificationPort(),
       approval: MockApprovalPort(),
       event: MockEventPort(),

@@ -54,8 +54,7 @@ class DlqProcessResult {
   factory DlqProcessResult.discarded(String eventId, String? reason) {
     return DlqProcessResult(
       success: true,
-      message:
-          'Event discarded: $eventId${reason != null ? ' ($reason)' : ''}',
+      message: 'Event discarded: $eventId${reason != null ? ' ($reason)' : ''}',
     );
   }
 
@@ -68,8 +67,7 @@ class DlqProcessResult {
   }
 
   @override
-  String toString() =>
-      'DlqProcessResult(success: $success, message: $message)';
+  String toString() => 'DlqProcessResult(success: $success, message: $message)';
 }
 
 /// Dead letter queue for managing failed events.
@@ -178,8 +176,8 @@ class DeadLetterQueue {
         final entry =
             await _kvStorage.get(dlqKey(eventId)) as Map<String, dynamic>?;
         if (entry == null) return DlqProcessResult.notFound(eventId);
-        final event = OpsEvent.fromJson(
-            entry['originalEvent'] as Map<String, dynamic>);
+        final event =
+            OpsEvent.fromJson(entry['originalEvent'] as Map<String, dynamic>);
         await _eventPort.publish(event.toPortEvent());
         await _kvStorage.remove(dlqKey(eventId));
         return DlqProcessResult.retried(eventId);

@@ -121,9 +121,8 @@ class BehaviorEngine {
     while (i < ordered.length) {
       final step = ordered[i];
 
-      final value = step.when == null
-          ? true
-          : guard.evaluate(step.when!, state);
+      final value =
+          step.when == null ? true : guard.evaluate(step.when!, state);
       final token = _route(step, value);
       final signal = outcomes.resolve(token, step, state);
 
@@ -144,8 +143,7 @@ class BehaviorEngine {
           );
 
         case ControlPrimitive.halt:
-          return _finish(start, state, completed,
-              BehaviorRunStatus.completed);
+          return _finish(start, state, completed, BehaviorRunStatus.completed);
 
         case ControlPrimitive.fail:
           return _finish(start, state, completed, BehaviorRunStatus.failed,
@@ -162,14 +160,12 @@ class BehaviorEngine {
                 state[step.id] = out;
               }
             } catch (e) {
-              if (step.onFailure != null &&
-                  index.containsKey(step.onFailure)) {
+              if (step.onFailure != null && index.containsKey(step.onFailure)) {
                 completed.add(step.id);
                 i = index[step.onFailure]!;
                 continue;
               }
-              return _finish(start, state, completed,
-                  BehaviorRunStatus.failed,
+              return _finish(start, state, completed, BehaviorRunStatus.failed,
                   error: '${step.id}: $e');
             }
           }
@@ -177,8 +173,7 @@ class BehaviorEngine {
           if (signal.primitive == ControlPrimitive.goto) {
             final target = signal.gotoId;
             if (target == null || !index.containsKey(target)) {
-              return _finish(start, state, completed,
-                  BehaviorRunStatus.failed,
+              return _finish(start, state, completed, BehaviorRunStatus.failed,
                   error: 'goto target not found: $target (${step.id})');
             }
             i = index[target]!;
@@ -262,13 +257,6 @@ class BehaviorEngine {
 
     for (final s in steps) {
       visit(s, <String>{});
-    }
-    // Append any not reached (declaration order safety net).
-    for (final s in steps) {
-      if (!visited.contains(s.id)) {
-        visited.add(s.id);
-        out.add(s);
-      }
     }
     return out;
   }

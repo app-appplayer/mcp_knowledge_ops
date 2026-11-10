@@ -306,15 +306,23 @@ void main() {
 
   group('Health enums', () {
     test('HealthStatus has all values', () {
-      expect(HealthStatus.values,
-          containsAll([HealthStatus.healthy, HealthStatus.degraded,
-              HealthStatus.unhealthy]));
+      expect(
+          HealthStatus.values,
+          containsAll([
+            HealthStatus.healthy,
+            HealthStatus.degraded,
+            HealthStatus.unhealthy
+          ]));
     });
 
     test('HealthCheckType has all values', () {
-      expect(HealthCheckType.values,
-          containsAll([HealthCheckType.liveness, HealthCheckType.readiness,
-              HealthCheckType.dependency]));
+      expect(
+          HealthCheckType.values,
+          containsAll([
+            HealthCheckType.liveness,
+            HealthCheckType.readiness,
+            HealthCheckType.dependency
+          ]));
     });
   });
 }

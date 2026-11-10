@@ -314,8 +314,7 @@ class AuditEvent {
         resource:
             AuditResource.fromJson(json['resource'] as Map<String, dynamic>),
         outcome: AuditOutcome.values.byName(json['outcome'] as String),
-        context:
-            AuditContext.fromJson(json['context'] as Map<String, dynamic>),
+        context: AuditContext.fromJson(json['context'] as Map<String, dynamic>),
         details: json['details'] != null
             ? Map<String, dynamic>.from(json['details'] as Map)
             : null,
@@ -412,8 +411,7 @@ class AuditFilter {
         !outcomes!.contains(event.outcome)) {
       return false;
     }
-    if (workspaceId != null &&
-        event.context.workspaceId != workspaceId) {
+    if (workspaceId != null && event.context.workspaceId != workspaceId) {
       return false;
     }
     return true;

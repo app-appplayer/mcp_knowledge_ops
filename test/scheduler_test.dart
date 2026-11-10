@@ -86,7 +86,8 @@ void main() {
         offset: const Duration(days: 1),
       );
 
-      expect(trigger.deadlineSource.type, equals(DeadlineSourceType.entityField));
+      expect(
+          trigger.deadlineSource.type, equals(DeadlineSourceType.entityField));
       expect(trigger.offset.inDays, equals(1));
       expect(trigger.type, equals(TriggerType.deadline));
     });
@@ -144,13 +145,15 @@ void main() {
 
   group('TriggerType', () {
     test('has all expected values', () {
-      expect(TriggerType.values, containsAll([
-        TriggerType.cron,
-        TriggerType.event,
-        TriggerType.deadline,
-        TriggerType.manual,
-        TriggerType.composite,
-      ]));
+      expect(
+          TriggerType.values,
+          containsAll([
+            TriggerType.cron,
+            TriggerType.event,
+            TriggerType.deadline,
+            TriggerType.manual,
+            TriggerType.composite,
+          ]));
     });
   });
 
@@ -236,13 +239,15 @@ void main() {
 
   group('ExecutionStatus', () {
     test('has all expected values', () {
-      expect(ExecutionStatus.values, containsAll([
-        ExecutionStatus.pending,
-        ExecutionStatus.running,
-        ExecutionStatus.completed,
-        ExecutionStatus.failed,
-        ExecutionStatus.cancelled,
-      ]));
+      expect(
+          ExecutionStatus.values,
+          containsAll([
+            ExecutionStatus.pending,
+            ExecutionStatus.running,
+            ExecutionStatus.completed,
+            ExecutionStatus.failed,
+            ExecutionStatus.cancelled,
+          ]));
     });
   });
 

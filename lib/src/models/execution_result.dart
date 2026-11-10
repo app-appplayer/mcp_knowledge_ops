@@ -304,7 +304,6 @@ class WorkflowMetrics {
       };
 }
 
-
 /// Artifact produced by workflow.
 class Artifact {
   /// Artifact identifier.
@@ -395,7 +394,6 @@ class RunbookStepResult {
     required this.duration,
   });
 }
-
 
 /// Runbook execution error.
 class RunbookError {

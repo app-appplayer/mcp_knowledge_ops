@@ -92,8 +92,7 @@ class IngestPipeline implements Pipeline<IngestInput, IngestOutput> {
         order: 6,
         handler: 'ingest.createCandidates',
         inputMapping: {'fragments': 'philosophy_screen'},
-        description:
-            'Create fact candidates via ClaimsPort.writeClaims',
+        description: 'Create fact candidates via ClaimsPort.writeClaims',
       ),
       const PipelineStage(
         id: 'link_entities',
@@ -111,8 +110,7 @@ class IngestPipeline implements Pipeline<IngestInput, IngestOutput> {
         handler: 'ingest.autoPromote',
         inputMapping: {'candidates': 'link_entities'},
         condition: 'config.autoPromote == true',
-        description:
-            'Validate + promote high-confidence candidates via '
+        description: 'Validate + promote high-confidence candidates via '
             'ClaimsPort.validateClaims + FactsPort.writeFacts',
       ),
       const PipelineStage(
@@ -129,8 +127,7 @@ class IngestPipeline implements Pipeline<IngestInput, IngestOutput> {
         order: 10,
         handler: 'ingest.markSummariesStale',
         inputMapping: {'promoted': 'auto_promote'},
-        description:
-            'Mark affected summaries stale via FactsPort.queryFacts + '
+        description: 'Mark affected summaries stale via FactsPort.queryFacts + '
             'FactsPort.writeFacts',
       ),
     ];

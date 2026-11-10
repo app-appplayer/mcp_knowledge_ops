@@ -146,11 +146,13 @@ void main() {
     test('fromString returns correct value', () {
       expect(OnErrorStrategy.fromString('fail'), equals(OnErrorStrategy.fail));
       expect(OnErrorStrategy.fromString('skip'), equals(OnErrorStrategy.skip));
-      expect(OnErrorStrategy.fromString('retry'), equals(OnErrorStrategy.retry));
+      expect(
+          OnErrorStrategy.fromString('retry'), equals(OnErrorStrategy.retry));
     });
 
     test('fromString returns fail for unknown', () {
-      expect(OnErrorStrategy.fromString('unknown'), equals(OnErrorStrategy.fail));
+      expect(
+          OnErrorStrategy.fromString('unknown'), equals(OnErrorStrategy.fail));
     });
   });
 

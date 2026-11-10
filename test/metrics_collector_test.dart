@@ -36,8 +36,8 @@ void main() {
     });
 
     test('increment() with labels', () {
-      collector.increment(
-          'requests_total', 1, {'method': 'GET', 'status': '200'});
+      collector
+          .increment('requests_total', 1, {'method': 'GET', 'status': '200'});
 
       final metric = sink.metrics.first;
       expect(metric.labels['method'], equals('GET'));
@@ -214,8 +214,7 @@ void main() {
     });
 
     test('timer has correct name and labels', () {
-      final timer =
-          collector.timer('operation', {'step': 'validate'});
+      final timer = collector.timer('operation', {'step': 'validate'});
 
       expect(timer.name, equals('operation'));
       expect(timer.labels['step'], equals('validate'));
@@ -474,9 +473,14 @@ void main() {
 
     test('MetricType enum has all values', () {
       expect(MetricType.values.length, equals(4));
-      expect(MetricType.values,
-          containsAll([MetricType.counter, MetricType.gauge,
-              MetricType.histogram, MetricType.summary]));
+      expect(
+          MetricType.values,
+          containsAll([
+            MetricType.counter,
+            MetricType.gauge,
+            MetricType.histogram,
+            MetricType.summary
+          ]));
     });
   });
 }

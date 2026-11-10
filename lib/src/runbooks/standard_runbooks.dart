@@ -10,10 +10,7 @@ library;
 ///
 /// Concrete runbook templates are defined externally as needed.
 /// This class provides utility methods for common runbook patterns.
-class StandardRunbooks {
-  // Prevent instantiation.
-  StandardRunbooks._();
-
+abstract final class StandardRunbooks {
   /// Philosophy alignment runbook definition.
   ///
   /// Provides steps for verifying and maintaining philosophy alignment

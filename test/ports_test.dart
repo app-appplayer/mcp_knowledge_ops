@@ -123,23 +123,27 @@ void main() {
     test('registers 3 built-in workflows', () {
       final consumed = TestOpsPorts().toConsumedOpsPorts();
       final runtime = OpsRuntime.fromConsumedPorts(consumed);
-      expect(runtime.workflowRegistry.keys, containsAll(<String>[
-        'skill_build',
-        'profile_build',
-        'bundle_build',
-      ]));
+      expect(
+          runtime.workflowRegistry.keys,
+          containsAll(<String>[
+            'skill_build',
+            'profile_build',
+            'bundle_build',
+          ]));
     });
 
     test('registers 5 built-in pipelines', () {
       final consumed = TestOpsPorts().toConsumedOpsPorts();
       final runtime = OpsRuntime.fromConsumedPorts(consumed);
-      expect(runtime.pipelineRegistry.keys, containsAll(<String>[
-        'ingest_pipeline',
-        'curation_pipeline',
-        'summary_refresh_pipeline',
-        'pattern_mining_pipeline',
-        'index_rebuild_pipeline',
-      ]));
+      expect(
+          runtime.pipelineRegistry.keys,
+          containsAll(<String>[
+            'ingest_pipeline',
+            'curation_pipeline',
+            'summary_refresh_pipeline',
+            'pattern_mining_pipeline',
+            'index_rebuild_pipeline',
+          ]));
     });
   });
 }

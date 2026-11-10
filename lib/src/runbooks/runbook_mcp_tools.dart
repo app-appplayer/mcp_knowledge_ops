@@ -43,7 +43,8 @@ class RunbookMcpTools {
   /// Schema for resuming a manual step.
   static Map<String, dynamic> resumeManualStepSchema() => {
         'name': 'runbook.resumeManualStep',
-        'description': 'Resume a runbook execution that is waiting on a manual step',
+        'description':
+            'Resume a runbook execution that is waiting on a manual step',
         'input': {
           'executionId': 'String',
           'stepId': 'String',
@@ -55,7 +56,8 @@ class RunbookMcpTools {
   /// Schema for approving a runbook step.
   static Map<String, dynamic> approveStepSchema() => {
         'name': 'runbook.approveStep',
-        'description': 'Approve or reject a runbook step that is waiting for approval',
+        'description':
+            'Approve or reject a runbook step that is waiting for approval',
         'input': {
           'executionId': 'String',
           'stepId': 'String',

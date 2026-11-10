@@ -119,7 +119,8 @@ class ExecutionEngine {
         }
 
         // Check gates after this stage
-        for (final gate in pipeline.gates.where((g) => g.afterStage == stage.id)) {
+        for (final gate
+            in pipeline.gates.where((g) => g.afterStage == stage.id)) {
           final gateResult = await gateEvaluator.evaluate(gate, context);
           gateResults.add(gateResult);
 
@@ -297,7 +298,8 @@ class ExecutionEngine {
         }
 
         // Check gates
-        for (final gate in workflow.gates.where((g) => g.afterStage == stage.id)) {
+        for (final gate
+            in workflow.gates.where((g) => g.afterStage == stage.id)) {
           final gateResult = await gateEvaluator.evaluate(gate, context);
           gateResults.add(gateResult);
 
@@ -436,7 +438,8 @@ class ExecutionEngine {
     final stream = approval.watchApproval(result.approvalId);
     await for (final event in stream) {
       if (event.currentStatus == ApprovalStatus.approved) {
-        return StageResult.completed(stage.id, {'approvalId': result.approvalId});
+        return StageResult.completed(
+            stage.id, {'approvalId': result.approvalId});
       }
       if (event.currentStatus == ApprovalStatus.rejected) {
         return StageResult.failed(stage.id, 'Review rejected');
@@ -494,8 +497,7 @@ class ExecutionEngine {
         recipientId: 'team',
         type: NotificationType.action,
         title: 'Approval Required',
-        body:
-            'Workflow ${context.runId} requires approval at ${stage.name}',
+        body: 'Workflow ${context.runId} requires approval at ${stage.name}',
       ));
     }
 
@@ -506,7 +508,8 @@ class ExecutionEngine {
     final stream = approval.watchApproval(result.approvalId);
     await for (final event in stream) {
       if (event.currentStatus == ApprovalStatus.approved) {
-        return StageResult.completed(stage.id, {'approvalId': result.approvalId});
+        return StageResult.completed(
+            stage.id, {'approvalId': result.approvalId});
       }
       if (event.currentStatus == ApprovalStatus.rejected) {
         return StageResult.failed(stage.id, 'Approval rejected');
@@ -606,7 +609,8 @@ class ExecutionEngine {
     );
   }
 
-  WorkflowMetrics _buildWorkflowMetrics(List<StageResult> stages, Duration total) {
+  WorkflowMetrics _buildWorkflowMetrics(
+      List<StageResult> stages, Duration total) {
     final stageDurations = <String, Duration>{};
 
     for (final result in stages) {
@@ -710,7 +714,8 @@ abstract class ExecutionEventListener {
   void onPipelineStarted(String pipelineId, String runId);
 
   /// Called when a pipeline completes successfully.
-  void onPipelineCompleted(String pipelineId, String runId, PipelineMetrics metrics);
+  void onPipelineCompleted(
+      String pipelineId, String runId, PipelineMetrics metrics);
 
   /// Called when a pipeline fails.
   void onPipelineFailed(String pipelineId, String runId, Object error);
@@ -731,7 +736,8 @@ abstract class ExecutionEventListener {
   void onWorkflowStarted(String workflowId, String runId);
 
   /// Called when a workflow completes successfully.
-  void onWorkflowCompleted(String workflowId, String runId, WorkflowMetrics metrics);
+  void onWorkflowCompleted(
+      String workflowId, String runId, WorkflowMetrics metrics);
 
   /// Called when a workflow fails.
   void onWorkflowFailed(String workflowId, String runId, Object error);

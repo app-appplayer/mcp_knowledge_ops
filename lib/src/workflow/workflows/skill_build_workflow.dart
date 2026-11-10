@@ -276,7 +276,8 @@ class SkillBuildWorkflow extends Workflow<SkillBuildInput, SkillBuildOutput> {
       const WorkflowStage(
         id: 'philosophy_alignment',
         name: 'Philosophy Alignment',
-        description: 'Verify skill draft aligns with value priorities and does not violate prohibitions.',
+        description:
+            'Verify skill draft aligns with value priorities and does not violate prohibitions.',
         handler: 'philosophy.checkProhibitions',
         type: WorkflowStageType.task,
         order: 7,

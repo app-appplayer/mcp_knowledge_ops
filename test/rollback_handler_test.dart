@@ -111,9 +111,11 @@ void main() {
         status: RollbackStatus.failed,
         stageResults: [
           RollbackStageResult(stageId: 'stage-1', success: true),
-          RollbackStageResult(stageId: 'stage-2', success: false, message: 'error'),
+          RollbackStageResult(
+              stageId: 'stage-2', success: false, message: 'error'),
           RollbackStageResult(stageId: 'stage-3', success: true),
-          RollbackStageResult(stageId: 'stage-4', success: false, message: 'timeout'),
+          RollbackStageResult(
+              stageId: 'stage-4', success: false, message: 'timeout'),
         ],
       );
 
@@ -141,7 +143,8 @@ void main() {
         status: RollbackStatus.failed,
         stageResults: [
           RollbackStageResult(stageId: 'stage-1', success: true),
-          RollbackStageResult(stageId: 'stage-2', success: false, message: 'err'),
+          RollbackStageResult(
+              stageId: 'stage-2', success: false, message: 'err'),
         ],
         message: 'Partial failure',
       );
@@ -231,8 +234,7 @@ void main() {
       // Only stage-1 and stage-3 should be rolled back (stage-nonexistent
       // is not in stageOutputs)
       expect(result.stageResults, hasLength(2));
-      final rolledBackIds =
-          result.stageResults.map((r) => r.stageId).toList();
+      final rolledBackIds = result.stageResults.map((r) => r.stageId).toList();
       expect(rolledBackIds, contains('stage-1'));
       expect(rolledBackIds, contains('stage-3'));
     });

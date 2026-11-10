@@ -202,8 +202,8 @@ void main() {
       expect(first.isSuspended, isTrue);
 
       // Approver resumes with the state delta — no separate store write.
-      final resumed = await engine
-          .resume('run', steps, statePatch: {'approved': true});
+      final resumed =
+          await engine.resume('run', steps, statePatch: {'approved': true});
       expect(resumed.isComplete, isTrue);
       expect(d.calls, ['pay']);
     });
@@ -240,9 +240,8 @@ void main() {
       ];
 
       final d = _Dispatcher();
-      final first =
-          await BehaviorEngine(store: makeStore(), dispatch: d.call)
-              .run('run', steps, {});
+      final first = await BehaviorEngine(store: makeStore(), dispatch: d.call)
+          .run('run', steps, {});
       expect(first.isSuspended, isTrue);
       expect(kv.isNotEmpty, isTrue); // persisted to the kv backend
 
@@ -341,7 +340,8 @@ void main() {
       final result = await throwing.run(
         'r',
         [
-          const BehaviorStep(id: 's1', action: BehaviorAction(kind: 'tool', ref: 'x')),
+          const BehaviorStep(
+              id: 's1', action: BehaviorAction(kind: 'tool', ref: 'x')),
         ],
         {},
       );
@@ -354,7 +354,10 @@ void main() {
     test('step serializes and parses', () {
       final step = BehaviorStep.fromJson({
         'id': 's1',
-        'do': {'tool': 'send', 'args': {'to': 'x'}},
+        'do': {
+          'tool': 'send',
+          'args': {'to': 'x'}
+        },
         'when': 'ok == true',
         'then': {'false': 'wait'},
         'dependsOn': ['s0'],
@@ -370,7 +373,10 @@ void main() {
     test('skill shorthand parses to skill action', () {
       final step = BehaviorStep.fromJson({
         'id': 's1',
-        'do': {'skill': 'review', 'inputs': {'doc': 1}},
+        'do': {
+          'skill': 'review',
+          'inputs': {'doc': 1}
+        },
       });
       expect(step.action!.kind, 'skill');
       expect(step.action!.ref, 'review');

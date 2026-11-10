@@ -51,8 +51,7 @@ class IndexRebuildPipeline
         name: 'Snapshot',
         order: 1,
         handler: 'index.snapshot',
-        description:
-            'Create rollback snapshot via FactsPort.queryFacts',
+        description: 'Create rollback snapshot via FactsPort.queryFacts',
       ),
       const PipelineStage(
         id: 'rebuild_segments',

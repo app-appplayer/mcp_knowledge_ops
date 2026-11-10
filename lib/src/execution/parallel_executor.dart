@@ -30,14 +30,14 @@ class ParallelStageExecutor {
   final ExecutionEventListener? eventListener;
 
   /// Concurrency semaphore.
-  late final _Semaphore _semaphore;
+  late final Semaphore _semaphore;
 
   ParallelStageExecutor({
     required this.stageExecutor,
     this.maxConcurrency = 4,
     this.eventListener,
   }) {
-    _semaphore = _Semaphore(maxConcurrency);
+    _semaphore = Semaphore(maxConcurrency);
   }
 
   /// Execute stages in parallel respecting dependencies.
@@ -54,7 +54,7 @@ class ParallelStageExecutor {
     final results = <String, StageResult>{};
 
     // Build dependency graph
-    final graph = _DependencyGraph(stages);
+    final graph = DependencyGraph(stages);
 
     // Validate graph (check for cycles)
     final cycleCheck = graph.detectCycles();
@@ -114,9 +114,8 @@ class ParallelStageExecutor {
     Map<String, StageResult> previousResults,
     dynamic Function(Stage, ExecutionContext)? inputBuilder,
   ) async {
-    final stages = stageIds
-        .map((id) => allStages.firstWhere((s) => s.id == id))
-        .toList();
+    final stages =
+        stageIds.map((id) => allStages.firstWhere((s) => s.id == id)).toList();
 
     // Execute all stages in this level concurrently with semaphore control
     final futures = stages.map((stage) async {
@@ -218,8 +217,8 @@ class ParallelExecutionException implements Exception {
   String toString() => 'ParallelExecutionException: $message';
 }
 
-/// Dependency graph for stages.
-class _DependencyGraph {
+/// Dependency graph for stages (not part of the package barrel).
+class DependencyGraph {
   /// Stage dependencies (stage ID -> list of dependency IDs).
   final Map<String, List<String>> _dependencies = {};
 
@@ -229,7 +228,7 @@ class _DependencyGraph {
   /// All stage IDs.
   final Set<String> _stageIds = {};
 
-  _DependencyGraph(List<Stage> stages) {
+  DependencyGraph(List<Stage> stages) {
     for (final stage in stages) {
       _stageIds.add(stage.id);
       _dependencies[stage.id] = stage.dependsOn ?? [];
@@ -301,7 +300,8 @@ class _DependencyGraph {
       // Find stages with all dependencies satisfied
       final readyStages = remaining.where((stageId) {
         final deps = _dependencies[stageId] ?? [];
-        return deps.every((d) => completed.contains(d) || !_stageIds.contains(d));
+        return deps
+            .every((d) => completed.contains(d) || !_stageIds.contains(d));
       }).toList();
 
       if (readyStages.isEmpty) {
@@ -326,8 +326,9 @@ class _DependencyGraph {
   List<String> getDependencies(String stageId) => _dependencies[stageId] ?? [];
 }
 
-/// Counting semaphore for concurrency control.
-class _Semaphore {
+/// Counting semaphore for concurrency control (not part of the package
+/// barrel).
+class Semaphore {
   /// Maximum concurrent permits.
   final int maxPermits;
 
@@ -337,7 +338,7 @@ class _Semaphore {
   /// Queue of waiting acquirers.
   final Queue<Completer<void>> _waiting = Queue();
 
-  _Semaphore(this.maxPermits);
+  Semaphore(this.maxPermits);
 
   /// Number of permits currently in use.
   int get inUse => _permits;

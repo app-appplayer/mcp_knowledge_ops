@@ -2,6 +2,7 @@
 ///
 /// Provides tracing for pipeline and workflow execution.
 library;
+
 import '../id_generator.dart';
 
 /// Tracer for distributed tracing.
@@ -25,7 +26,8 @@ class Tracer {
   String? get traceId => _traceId;
 
   /// Get current span ID.
-  String? get currentSpanId => _spanStack.isNotEmpty ? _spanStack.last.spanId : null;
+  String? get currentSpanId =>
+      _spanStack.isNotEmpty ? _spanStack.last.spanId : null;
 
   /// Start a new root span.
   Span startSpan(String name, {Map<String, dynamic>? attributes}) {
@@ -68,7 +70,8 @@ class Tracer {
   }
 
   /// Start a child span of current span.
-  @Deprecated('Use Span.startChild() instead. startChild moved to Span per spec.')
+  @Deprecated(
+      'Use Span.startChild() instead. startChild moved to Span per spec.')
   Span startChild(String name, {Map<String, dynamic>? attributes}) {
     return startSpan(name, attributes: attributes);
   }
@@ -353,7 +356,8 @@ class TraceContext {
   Map<String, String> toHeaders() => {
         'trace-id': traceId,
         if (parentSpanId != null) 'span-id': parentSpanId!,
-        for (final entry in baggage.entries) 'baggage-${entry.key}': entry.value,
+        for (final entry in baggage.entries)
+          'baggage-${entry.key}': entry.value,
       };
 
   /// Deserialize from W3C trace context headers.

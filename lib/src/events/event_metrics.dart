@@ -11,9 +11,7 @@ import '../observability/metrics_collector.dart';
 ///
 /// These constants define the canonical metric names used throughout
 /// the event architecture for consistent observability.
-class EventMetricNames {
-  EventMetricNames._();
-
+abstract final class EventMetricNames {
   /// Total events published.
   static const String eventsPublished = 'ops.events.published';
 

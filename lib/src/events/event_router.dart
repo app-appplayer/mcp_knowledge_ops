@@ -157,7 +157,8 @@ class EventRouter {
         },
       );
     } catch (e, stack) {
-      _logger.error('Interceptor failed', error: e, context: {'stackTrace': stack.toString()});
+      _logger.error('Interceptor failed',
+          error: e, context: {'stackTrace': stack.toString()});
       return false;
     }
     return chainContinued;

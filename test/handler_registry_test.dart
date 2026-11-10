@@ -121,12 +121,12 @@ void main() {
 
     test('registerAll adds multiple handlers', () {
       final handlers = {
-        'bulk-1': FunctionHandler(
-            name: 'bulk-1', handler: (i, c) async => null),
-        'bulk-2': FunctionHandler(
-            name: 'bulk-2', handler: (i, c) async => null),
-        'bulk-3': FunctionHandler(
-            name: 'bulk-3', handler: (i, c) async => null),
+        'bulk-1':
+            FunctionHandler(name: 'bulk-1', handler: (i, c) async => null),
+        'bulk-2':
+            FunctionHandler(name: 'bulk-2', handler: (i, c) async => null),
+        'bulk-3':
+            FunctionHandler(name: 'bulk-3', handler: (i, c) async => null),
       };
 
       registry.registerAll(handlers);
@@ -139,8 +139,7 @@ void main() {
     test('findByPattern with wildcard matching', () {
       registry.register(
         'pipeline.ingest',
-        FunctionHandler(
-            name: 'pipeline.ingest', handler: (i, c) async => null),
+        FunctionHandler(name: 'pipeline.ingest', handler: (i, c) async => null),
       );
       registry.register(
         'pipeline.transform',
@@ -149,8 +148,7 @@ void main() {
       );
       registry.register(
         'workflow.build',
-        FunctionHandler(
-            name: 'workflow.build', handler: (i, c) async => null),
+        FunctionHandler(name: 'workflow.build', handler: (i, c) async => null),
       );
 
       final pipelineHandlers = registry.findByPattern('pipeline.*');
@@ -185,13 +183,11 @@ void main() {
     test('validate returns empty list when all handlers present', () {
       registry.register(
         'required-1',
-        FunctionHandler(
-            name: 'required-1', handler: (i, c) async => null),
+        FunctionHandler(name: 'required-1', handler: (i, c) async => null),
       );
       registry.register(
         'required-2',
-        FunctionHandler(
-            name: 'required-2', handler: (i, c) async => null),
+        FunctionHandler(name: 'required-2', handler: (i, c) async => null),
       );
 
       final missing = registry.validate(['required-1', 'required-2']);

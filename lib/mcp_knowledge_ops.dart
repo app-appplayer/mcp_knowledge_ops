@@ -44,13 +44,21 @@ library mcp_knowledge_ops;
 
 // Models (new canonical models)
 // Hide legacy event classes that are superseded by typed OpsEvent subclasses in events_arch
-export 'src/models/models.dart' hide PipelineStartedEvent, PipelineCompletedEvent, WorkflowStartedEvent, WorkflowCompletedEvent, CheckpointCreatedEvent;
+export 'src/models/models.dart'
+    hide
+        PipelineStartedEvent,
+        PipelineCompletedEvent,
+        WorkflowStartedEvent,
+        WorkflowCompletedEvent,
+        CheckpointCreatedEvent;
 
 // Execution engine (new - hide exceptions, canonical in errors)
-export 'src/execution/execution.dart' hide PipelineException, StageException, GateException;
+export 'src/execution/execution.dart'
+    hide PipelineException, StageException, GateException;
 
 // Observability (hide PipelineMetrics - canonical in models)
-export 'src/observability/observability.dart' hide PipelineMetrics, WorkflowMetrics, SchedulerMetrics;
+export 'src/observability/observability.dart'
+    hide PipelineMetrics, WorkflowMetrics, SchedulerMetrics;
 
 // Runbooks (new)
 export 'src/runbooks/runbooks.dart';
@@ -59,9 +67,24 @@ export 'src/runbooks/runbooks.dart';
 export 'src/behavior/behavior.dart';
 
 // Pipeline infrastructure (existing - hide duplicates)
-export 'src/pipeline/pipeline.dart' hide PipelineResult, PipelineMetrics, PipelineError, StageResult, StageStatus, RetryConfig;
-export 'src/pipeline/pipeline_executor.dart' hide PipelineStartedEvent, PipelineCompletedEvent, PipelineFailedEvent, StageStartedEvent, StageCompletedEvent, StageFailedEvent;
-export 'src/pipeline/pipeline_handler.dart' hide FunctionHandler, HandlerFilter, HandlerInfo;
+export 'src/pipeline/pipeline.dart'
+    hide
+        PipelineResult,
+        PipelineMetrics,
+        PipelineError,
+        StageResult,
+        StageStatus,
+        RetryConfig;
+export 'src/pipeline/pipeline_executor.dart'
+    hide
+        PipelineStartedEvent,
+        PipelineCompletedEvent,
+        PipelineFailedEvent,
+        StageStartedEvent,
+        StageCompletedEvent,
+        StageFailedEvent;
+export 'src/pipeline/pipeline_handler.dart'
+    hide FunctionHandler, HandlerFilter, HandlerInfo;
 export 'src/pipeline/priority_calculator.dart';
 export 'src/pipeline/cascade_refresh.dart';
 export 'src/pipeline/clustering.dart';
@@ -76,7 +99,12 @@ export 'src/pipeline/pipelines/index_rebuild_pipeline.dart';
 
 // Workflow infrastructure (existing - hide duplicates)
 export 'src/workflow/workflow.dart';
-export 'src/workflow/workflow_executor.dart' hide WorkflowException, WorkflowStartedEvent, WorkflowCompletedEvent, WorkflowFailedEvent;
+export 'src/workflow/workflow_executor.dart'
+    hide
+        WorkflowException,
+        WorkflowStartedEvent,
+        WorkflowCompletedEvent,
+        WorkflowFailedEvent;
 export 'src/workflow/review_models.dart';
 export 'src/workflow/approval_router.dart';
 export 'src/workflow/cancellation.dart';
@@ -91,7 +119,17 @@ export 'src/errors/errors.dart' hide CircuitOpenException;
 
 // Events (hide RetryPolicy canonical in pipeline; hide typed event names
 // that duplicate scheduler_events.dart canonical OpsEvent subclasses)
-export 'src/events/events_arch.dart' hide RetryPolicy, ScheduleDeletedEvent, SchedulePausedEvent, ScheduleResumedEvent, ScheduleTriggeredEvent, ExecutionQueuedEvent, ExecutionStartedEvent, ExecutionCompletedEvent, ExecutionFailedEvent;
+export 'src/events/events_arch.dart'
+    hide
+        RetryPolicy,
+        ScheduleDeletedEvent,
+        SchedulePausedEvent,
+        ScheduleResumedEvent,
+        ScheduleTriggeredEvent,
+        ExecutionQueuedEvent,
+        ExecutionStartedEvent,
+        ExecutionCompletedEvent,
+        ExecutionFailedEvent;
 
 // Scheduler (hide TriggerInfo, canonical in runbooks)
 export 'src/scheduler/scheduler.dart' hide TriggerInfo, ExecutionError;

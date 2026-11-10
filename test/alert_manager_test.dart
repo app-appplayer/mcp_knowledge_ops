@@ -474,21 +474,35 @@ void main() {
 
   group('Alert enums', () {
     test('AlertSeverity has all values', () {
-      expect(AlertSeverity.values,
-          containsAll([AlertSeverity.info, AlertSeverity.warning,
-              AlertSeverity.critical, AlertSeverity.emergency]));
+      expect(
+          AlertSeverity.values,
+          containsAll([
+            AlertSeverity.info,
+            AlertSeverity.warning,
+            AlertSeverity.critical,
+            AlertSeverity.emergency
+          ]));
     });
 
     test('AlertState has all values', () {
-      expect(AlertState.values,
-          containsAll([AlertState.pending, AlertState.firing,
-              AlertState.acknowledged, AlertState.resolved]));
+      expect(
+          AlertState.values,
+          containsAll([
+            AlertState.pending,
+            AlertState.firing,
+            AlertState.acknowledged,
+            AlertState.resolved
+          ]));
     });
 
     test('AlertConditionType has all values', () {
-      expect(AlertConditionType.values,
-          containsAll([AlertConditionType.metric, AlertConditionType.log,
-              AlertConditionType.expression]));
+      expect(
+          AlertConditionType.values,
+          containsAll([
+            AlertConditionType.metric,
+            AlertConditionType.log,
+            AlertConditionType.expression
+          ]));
     });
   });
 }

@@ -5,9 +5,13 @@ import 'package:mcp_knowledge_ops/mcp_knowledge_ops.dart';
 void main() {
   group('CascadeRefreshExecutor', () {
     late CascadeRefreshExecutor executor;
+    late List<String> refreshed;
 
     setUp(() {
-      executor = CascadeRefreshExecutor();
+      refreshed = [];
+      executor = CascadeRefreshExecutor(
+        refresher: (nodeId) async => refreshed.add(nodeId),
+      );
     });
 
     group('topologicalSort', () {
@@ -83,6 +87,36 @@ void main() {
         expect(result.results, hasLength(2));
         expect(result.results['A']!.success, isTrue);
         expect(result.results['B']!.success, isTrue);
+        // The refresher really ran, and in dependency order.
+        expect(refreshed, ['A', 'B']);
+      });
+
+      test('reports failure when no refresher is configured', () async {
+        final result = await CascadeRefreshExecutor().execute(
+          const CascadeRefreshRequest(dependencies: {
+            'B': ['A'],
+            'A': [],
+          }),
+        );
+        expect(result.refreshedCount, 0);
+        expect(result.failedCount, 2);
+        expect(result.results['A']!.error, contains('nothing was refreshed'));
+      });
+
+      test('reports the failure of a node whose refresher throws', () async {
+        final failing = CascadeRefreshExecutor(
+          refresher: (id) async {
+            if (id == 'A') throw StateError('boom');
+          },
+        );
+        final result = await failing.execute(
+          const CascadeRefreshRequest(dependencies: {
+            'B': ['A'],
+            'A': [],
+          }),
+        );
+        expect(result.results['A']!.success, isFalse);
+        expect(result.results['A']!.error, contains('boom'));
       });
 
       test('processes all nodes in complex graph', () async {

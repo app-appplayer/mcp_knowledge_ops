@@ -26,8 +26,7 @@ void main() {
       expect(config.publishTimeout, equals(const Duration(seconds: 30)));
       expect(config.enableBatching, isTrue);
       expect(config.batchSize, equals(100));
-      expect(config.batchWindow,
-          equals(const Duration(milliseconds: 100)));
+      expect(config.batchWindow, equals(const Duration(milliseconds: 100)));
     });
 
     test('custom values override defaults', () {
@@ -43,8 +42,7 @@ void main() {
       expect(config.publishTimeout, equals(const Duration(seconds: 10)));
       expect(config.enableBatching, isFalse);
       expect(config.batchSize, equals(200));
-      expect(config.batchWindow,
-          equals(const Duration(milliseconds: 500)));
+      expect(config.batchWindow, equals(const Duration(milliseconds: 500)));
     });
   });
 
@@ -115,8 +113,7 @@ void main() {
       );
 
       expect(policy.maxAttempts, equals(5));
-      expect(policy.initialDelay,
-          equals(const Duration(milliseconds: 500)));
+      expect(policy.initialDelay, equals(const Duration(milliseconds: 500)));
       expect(policy.backoffMultiplier, equals(1.5));
     });
   });
@@ -126,8 +123,7 @@ void main() {
       const config = MonitoringConfig();
       expect(config.enableMetrics, isTrue);
       expect(config.enableTracing, isTrue);
-      expect(config.metricsInterval,
-          equals(const Duration(seconds: 60)));
+      expect(config.metricsInterval, equals(const Duration(seconds: 60)));
       expect(config.samplingRate, equals(1.0));
     });
 
@@ -141,8 +137,7 @@ void main() {
 
       expect(config.enableMetrics, isFalse);
       expect(config.enableTracing, isFalse);
-      expect(config.metricsInterval,
-          equals(const Duration(seconds: 30)));
+      expect(config.metricsInterval, equals(const Duration(seconds: 30)));
       expect(config.samplingRate, equals(0.5));
     });
   });

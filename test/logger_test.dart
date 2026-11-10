@@ -63,9 +63,11 @@ void main() {
     });
 
     test('child() inherits context from parent', () {
-      final parent =
-          Logger(name: 'parent', minLevel: LogLevel.trace, sink: sink,
-              context: {'env': 'test'});
+      final parent = Logger(
+          name: 'parent',
+          minLevel: LogLevel.trace,
+          sink: sink,
+          context: {'env': 'test'});
       final child = parent.child('child', context: {'extra': 'data'});
 
       child.info('message');
@@ -431,9 +433,16 @@ void main() {
   group('LogLevel', () {
     test('has all expected values', () {
       expect(LogLevel.values.length, equals(6));
-      expect(LogLevel.values,
-          containsAll([LogLevel.trace, LogLevel.debug, LogLevel.info,
-              LogLevel.warn, LogLevel.error, LogLevel.fatal]));
+      expect(
+          LogLevel.values,
+          containsAll([
+            LogLevel.trace,
+            LogLevel.debug,
+            LogLevel.info,
+            LogLevel.warn,
+            LogLevel.error,
+            LogLevel.fatal
+          ]));
     });
 
     test('ordering is correct', () {

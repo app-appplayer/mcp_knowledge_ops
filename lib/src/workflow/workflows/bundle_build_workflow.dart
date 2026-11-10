@@ -145,7 +145,8 @@ class BundleBuildOutput {
 /// 11. generate_integrity - Generate integrity checksums
 /// 12. human_approval - Request human approval (conditional)
 /// 13. publish - Publish the bundle (conditional)
-class BundleBuildWorkflow extends Workflow<BundleBuildInput, BundleBuildOutput> {
+class BundleBuildWorkflow
+    extends Workflow<BundleBuildInput, BundleBuildOutput> {
   @override
   final String id;
 
@@ -165,7 +166,8 @@ class BundleBuildWorkflow extends Workflow<BundleBuildInput, BundleBuildOutput> 
     String? id,
     this.name = 'Bundle Build Workflow',
     this.version = '1.0.0',
-    this.description = 'Assembles and publishes MCP bundles from component manifests.',
+    this.description =
+        'Assembles and publishes MCP bundles from component manifests.',
     WorkflowConfig? config,
   })  : id = id ?? 'bundle_build',
         config = config ?? const WorkflowConfig();
@@ -189,7 +191,8 @@ class BundleBuildWorkflow extends Workflow<BundleBuildInput, BundleBuildOutput> 
     const WorkflowStage(
       id: 'validate_dependencies',
       name: 'Validate Dependencies',
-      description: 'Validate component dependencies for conflicts and missing items.',
+      description:
+          'Validate component dependencies for conflicts and missing items.',
       handler: 'bundle.validateDependencies',
       type: WorkflowStageType.task,
       order: 2,

@@ -8,7 +8,8 @@ import '../models/execution_context.dart' show RetryConfig;
 
 // Re-export canonical model types (avoid duplication with execution model).
 export '../models/stage.dart' show StageResult, StageStatus;
-export '../models/execution_result.dart' show PipelineResult, PipelineError, PipelineMetrics;
+export '../models/execution_result.dart'
+    show PipelineResult, PipelineError, PipelineMetrics;
 export '../models/execution_context.dart' show RetryConfig;
 
 /// Base pipeline interface for data processing flows.
@@ -86,17 +87,17 @@ class PipelineStage {
       name: json['name'] as String? ?? '',
       order: json['order'] as int? ?? 0,
       handler: json['handler'] as String? ?? '',
-      inputMapping:
-          (json['inputMapping'] as Map<String, dynamic>?)?.cast<String, String>() ?? {},
-      outputMapping:
-          (json['outputMapping'] as Map<String, dynamic>?)?.cast<String, String>() ?? {},
+      inputMapping: (json['inputMapping'] as Map<String, dynamic>?)
+              ?.cast<String, String>() ??
+          {},
+      outputMapping: (json['outputMapping'] as Map<String, dynamic>?)
+              ?.cast<String, String>() ??
+          {},
       condition: json['condition'] as String?,
       retryConfig: json['retryConfig'] != null
           ? RetryConfig.fromJson(json['retryConfig'] as Map<String, dynamic>)
           : null,
-      timeout: json['timeout'] != null
-          ? _parseDuration(json['timeout'])
-          : null,
+      timeout: json['timeout'] != null ? _parseDuration(json['timeout']) : null,
       description: json['description'] as String?,
     );
   }
@@ -272,7 +273,8 @@ class RetryPolicy {
       defaultConfig:
           RetryConfig.fromJson(json['default'] as Map<String, dynamic>? ?? {}),
       perStage: (json['perStage'] as Map<String, dynamic>?)?.map(
-            (k, v) => MapEntry(k, RetryConfig.fromJson(v as Map<String, dynamic>)),
+            (k, v) =>
+                MapEntry(k, RetryConfig.fromJson(v as Map<String, dynamic>)),
           ) ??
           {},
     );

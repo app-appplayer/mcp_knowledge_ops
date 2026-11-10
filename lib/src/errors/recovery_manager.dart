@@ -145,7 +145,8 @@ class RecoveryManager {
     } on OpsException {
       rethrow;
     } catch (e, stack) {
-      _logger.error('Recovery failed with unexpected error', error: e, context: {'stackTrace': stack.toString()});
+      _logger.error('Recovery failed with unexpected error',
+          error: e, context: {'stackTrace': stack.toString()});
 
       return RecoveryResult(
         runId: runId,
@@ -204,7 +205,7 @@ class RecoveryManager {
 
       throw PermanentOpsException(
         'Checkpoint ${checkpoint.id} is not resumable '
-            '(state: ${checkpoint.executionState.name})',
+        '(state: ${checkpoint.executionState.name})',
         code: 'OPS-EXEC-009',
         details: {
           'runId': runId,
@@ -344,7 +345,7 @@ class RecoveryManager {
 
       throw PermanentOpsException(
         'No checkpoint found for run: $runId; '
-            'cannot determine which stage to skip',
+        'cannot determine which stage to skip',
         code: 'OPS-EXEC-009',
         details: {'runId': runId},
       );

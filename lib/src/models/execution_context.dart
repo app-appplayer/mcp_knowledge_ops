@@ -150,8 +150,7 @@ class ExecutionContext {
       userId: checkpoint.state['userId'] as String?,
       asOf: DateTime.now(),
       config: config,
-      variables:
-          checkpoint.state['variables'] as Map<String, dynamic>? ?? {},
+      variables: checkpoint.state['variables'] as Map<String, dynamic>? ?? {},
       state: Map.from(checkpoint.state),
       stageOutputs: Map.from(checkpoint.stageOutputs),
       resumeFromStage: checkpoint.lastCompletedStage,
@@ -309,7 +308,8 @@ class RetryConfig {
       final jitter = (delay.inMilliseconds * jitterFactor).round();
       final offset = (DateTime.now().microsecond % (jitter * 2 + 1)) - jitter;
       delay = Duration(
-        milliseconds: (delay.inMilliseconds + offset).clamp(0, maxDelay.inMilliseconds),
+        milliseconds:
+            (delay.inMilliseconds + offset).clamp(0, maxDelay.inMilliseconds),
       );
     }
 
@@ -354,14 +354,13 @@ class RetryConfig {
         ),
         backoffMultiplier:
             (json['backoffMultiplier'] as num?)?.toDouble() ?? 2.0,
-        jitterFactor:
-            (json['jitterFactor'] as num?)?.toDouble() ?? 0.0,
-        retryableErrors: (json['retryableErrors'] as List<dynamic>?)
-                ?.cast<String>() ??
-            const [],
-        retryableExceptions: (json['retryableExceptions'] as List<dynamic>?)
-                ?.cast<String>() ??
-            const [],
+        jitterFactor: (json['jitterFactor'] as num?)?.toDouble() ?? 0.0,
+        retryableErrors:
+            (json['retryableErrors'] as List<dynamic>?)?.cast<String>() ??
+                const [],
+        retryableExceptions:
+            (json['retryableExceptions'] as List<dynamic>?)?.cast<String>() ??
+                const [],
       );
 
   /// Create a copy with modified fields.
@@ -435,8 +434,7 @@ class Checkpoint {
   });
 
   /// Check if checkpoint is expired.
-  bool get isExpired =>
-      expiresAt != null && DateTime.now().isAfter(expiresAt!);
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
 
   /// Check if checkpoint is resumable.
   bool get isResumable =>

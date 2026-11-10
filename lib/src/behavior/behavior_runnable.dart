@@ -21,7 +21,8 @@ class BehaviorRunnable {
 
   /// Resume a suspended run, optionally merging [statePatch] into its state
   /// first (e.g. `{approved: true}` to unblock an approval guard).
-  Future<EngineResult> resume(String runId, {Map<String, dynamic>? statePatch}) =>
+  Future<EngineResult> resume(String runId,
+          {Map<String, dynamic>? statePatch}) =>
       engine.resume(runId, steps, statePatch: statePatch);
 
   /// The store backing this runnable — ephemeral or durable.

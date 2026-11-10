@@ -107,7 +107,8 @@ class OutcomeRegistry {
   bool has(String name) => _handlers.containsKey(_name(name));
 
   /// Resolve a routed outcome [token] (`name` or `name:arg`) to a signal.
-  ControlSignal resolve(String token, BehaviorStep step, Map<String, dynamic> state) {
+  ControlSignal resolve(
+      String token, BehaviorStep step, Map<String, dynamic> state) {
     final handler = _handlers[_name(token)];
     if (handler == null) {
       throw StateError('Unknown outcome: "$token" (step ${step.id})');

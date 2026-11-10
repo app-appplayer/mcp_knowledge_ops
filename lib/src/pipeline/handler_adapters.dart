@@ -253,10 +253,8 @@ class ExpressionHandlerAdapter
         return left <= right;
       case '==':
         return left == right;
-      case '!=':
+      default: // '!='
         return left != right;
-      default:
-        return false;
     }
   }
 }

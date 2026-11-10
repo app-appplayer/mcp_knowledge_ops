@@ -113,8 +113,7 @@ class Logger {
     final userId = merged.remove('userId') as String?;
     final environment = merged.remove('environment') as String?;
     final rawTags = merged.remove('tags');
-    final tags =
-        rawTags is List ? rawTags.cast<String>() : const <String>[];
+    final tags = rawTags is List ? rawTags.cast<String>() : const <String>[];
 
     final entry = LogEntry(
       timestamp: DateTime.now(),
@@ -181,7 +180,8 @@ class ExecutionLogger extends Logger {
   }
 
   /// Log the successful end of a stage.
-  void stageEnd(String stageId, {Object? result, Map<String, dynamic>? metadata}) {
+  void stageEnd(String stageId,
+      {Object? result, Map<String, dynamic>? metadata}) {
     info('Stage ended: $stageId', {
       'event': 'stage.end',
       'stageId': stageId,
@@ -191,7 +191,8 @@ class ExecutionLogger extends Logger {
   }
 
   /// Log a stage failure.
-  void stageFail(String stageId, Object error, {Map<String, dynamic>? metadata}) {
+  void stageFail(String stageId, Object error,
+      {Map<String, dynamic>? metadata}) {
     this.error('Stage failed: $stageId', error: error, context: {
       'event': 'stage.fail',
       'stageId': stageId,
@@ -200,7 +201,8 @@ class ExecutionLogger extends Logger {
   }
 
   /// Log a skipped stage.
-  void stageSkip(String stageId, {String? reason, Map<String, dynamic>? metadata}) {
+  void stageSkip(String stageId,
+      {String? reason, Map<String, dynamic>? metadata}) {
     info('Stage skipped: $stageId', {
       'event': 'stage.skip',
       'stageId': stageId,
@@ -210,7 +212,8 @@ class ExecutionLogger extends Logger {
   }
 
   /// Log a gate evaluation result.
-  void gateEvaluate(String gateId, bool result, {Map<String, dynamic>? metadata}) {
+  void gateEvaluate(String gateId, bool result,
+      {Map<String, dynamic>? metadata}) {
     info('Gate evaluated: $gateId = $result', {
       'event': 'gate.evaluate',
       'gateId': gateId,
@@ -244,7 +247,8 @@ class ExecutionLogger extends Logger {
   }
 
   /// Log an execution checkpoint.
-  void checkpoint(String checkpointId, {Object? data, Map<String, dynamic>? metadata}) {
+  void checkpoint(String checkpointId,
+      {Object? data, Map<String, dynamic>? metadata}) {
     info('Checkpoint: $checkpointId', {
       'event': 'checkpoint',
       'checkpointId': checkpointId,
@@ -254,7 +258,8 @@ class ExecutionLogger extends Logger {
   }
 
   /// Log a performance metric.
-  void metric(String name, double value, {String? unit, Map<String, dynamic>? metadata}) {
+  void metric(String name, double value,
+      {String? unit, Map<String, dynamic>? metadata}) {
     debug('Metric: $name = $value${unit != null ? ' $unit' : ''}', {
       'event': 'metric',
       'metricName': name,
@@ -539,7 +544,13 @@ class RedactionConfig {
 
   const RedactionConfig({
     this.enabled = true,
-    this.fields = const ['password', 'token', 'secret', 'apiKey', 'authorization'],
+    this.fields = const [
+      'password',
+      'token',
+      'secret',
+      'apiKey',
+      'authorization'
+    ],
     this.replacement = '***REDACTED***',
   });
 }

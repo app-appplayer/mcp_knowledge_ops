@@ -92,8 +92,7 @@ class PipelinePortAdapter implements PipelinePort {
   }
 
   @override
-  Future<PipelineRunHandle?> getPipelineRun(String runId) async =>
-      _runs[runId];
+  Future<PipelineRunHandle?> getPipelineRun(String runId) async => _runs[runId];
 
   Map<String, dynamic>? _toMap(Object? value) {
     if (value == null) return null;

@@ -479,8 +479,7 @@ void main() {
       expect(event.executionId, equals('exec-rb1'));
       expect(event.payload['executionId'], equals('exec-rb1'));
       expect(event.payload['reason'], equals('Data corruption detected'));
-      expect(
-          event.payload['affectedStages'], equals(['stage-2', 'stage-3']));
+      expect(event.payload['affectedStages'], equals(['stage-2', 'stage-3']));
     });
   });
 
@@ -678,8 +677,8 @@ void main() {
       expect(json['eventId'], isNotEmpty);
       expect(json['correlationId'], equals('corr-json'));
       expect(json['payload'], isA<Map<String, dynamic>>());
-      expect(
-          (json['payload'] as Map<String, dynamic>)['factId'], equals('fact-json'));
+      expect((json['payload'] as Map<String, dynamic>)['factId'],
+          equals('fact-json'));
     });
 
     test('typed events inherit toPortEvent from OpsEvent', () {

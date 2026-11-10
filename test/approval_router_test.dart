@@ -38,7 +38,8 @@ void main() {
       expect(approvers.first, equals('senior-engineer'));
     });
 
-    test('resolveApprovers returns defaultApprovers when no rules match', () async {
+    test('resolveApprovers returns defaultApprovers when no rules match',
+        () async {
       final router = StandardApprovalRouter(
         rules: ApprovalRoutingRules(
           rules: [
@@ -72,7 +73,8 @@ void main() {
       expect(approvers.first, equals('fallback-user'));
     });
 
-    test('resolveApprovers returns empty when no rules match and no defaults', () async {
+    test('resolveApprovers returns empty when no rules match and no defaults',
+        () async {
       final router = StandardApprovalRouter(
         rules: ApprovalRoutingRules(
           rules: [

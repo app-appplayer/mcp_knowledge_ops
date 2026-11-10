@@ -3,7 +3,6 @@
 /// Defines runbook structure for operational procedures.
 library;
 
-
 // --- Enums ---
 
 /// Runbook step types matching spec §3.
@@ -938,7 +937,8 @@ class RunbookTrigger {
   }
 
   /// Create an event-based trigger.
-  factory RunbookTrigger.event(String eventType, {Map<String, dynamic>? filter, String? description}) {
+  factory RunbookTrigger.event(String eventType,
+      {Map<String, dynamic>? filter, String? description}) {
     return RunbookTrigger(
       type: 'event',
       config: {
@@ -950,7 +950,8 @@ class RunbookTrigger {
   }
 
   /// Create an alert-based trigger.
-  factory RunbookTrigger.alert(String alertName, {String? severity, String? description}) {
+  factory RunbookTrigger.alert(String alertName,
+      {String? severity, String? description}) {
     return RunbookTrigger(
       type: 'alert',
       config: {

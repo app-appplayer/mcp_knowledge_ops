@@ -380,7 +380,19 @@ class MetricsConfig {
   const MetricsConfig({
     this.enabled = true,
     this.reportingInterval = const Duration(seconds: 60),
-    this.defaultBuckets = const [5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000],
+    this.defaultBuckets = const [
+      5,
+      10,
+      25,
+      50,
+      100,
+      250,
+      500,
+      1000,
+      2500,
+      5000,
+      10000
+    ],
     this.maxCardinality = 1000,
   });
 }
@@ -390,9 +402,7 @@ class MetricsConfig {
 // ═══════════════════════════════════════════════════════════════════
 
 /// Standard pipeline metric names.
-abstract class PipelineMetrics {
-  PipelineMetrics._();
-
+abstract final class PipelineMetrics {
   static const duration = 'ops.pipeline.duration';
   static const stageCount = 'ops.pipeline.stage_count';
   static const stageDuration = 'ops.pipeline.stage.duration';
@@ -402,9 +412,7 @@ abstract class PipelineMetrics {
 }
 
 /// Standard workflow metric names.
-abstract class WorkflowMetrics {
-  WorkflowMetrics._();
-
+abstract final class WorkflowMetrics {
   static const duration = 'ops.workflow.duration';
   static const stepCount = 'ops.workflow.step_count';
   static const stepDuration = 'ops.workflow.step.duration';
@@ -415,9 +423,7 @@ abstract class WorkflowMetrics {
 }
 
 /// Standard scheduler metric names.
-abstract class SchedulerMetrics {
-  SchedulerMetrics._();
-
+abstract final class SchedulerMetrics {
   static const scheduledTotal = 'ops.scheduler.scheduled.total';
   static const triggeredTotal = 'ops.scheduler.triggered.total';
   static const missedTotal = 'ops.scheduler.missed.total';

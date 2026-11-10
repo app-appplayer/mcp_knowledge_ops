@@ -122,8 +122,7 @@ class KvStateStore implements StateStore {
   Future<BehaviorRunState?> load(String runId) async {
     final raw = await readKv(_key(runId));
     if (raw == null) return null;
-    return BehaviorRunState.fromJson(
-        jsonDecode(raw) as Map<String, dynamic>);
+    return BehaviorRunState.fromJson(jsonDecode(raw) as Map<String, dynamic>);
   }
 
   @override

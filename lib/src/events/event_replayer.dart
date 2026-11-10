@@ -137,9 +137,8 @@ class EventReplayer {
     final stream = EventStreams.execution(executionId);
     final posKey = EventStorageKeys.streamPosition(stream);
     final maxPos = (await _kvStorage.get(posKey) as int?) ?? 0;
-    final startPos = (fromPosition != null && fromPosition > 0)
-        ? fromPosition
-        : 1;
+    final startPos =
+        (fromPosition != null && fromPosition > 0) ? fromPosition : 1;
 
     _logger.info('Starting event replay', {
       'executionId': executionId,

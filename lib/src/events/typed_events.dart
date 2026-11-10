@@ -2182,8 +2182,7 @@ class ProfileAppliedEvent extends OpsEvent {
             if (profileVersion != null) 'profileVersion': profileVersion,
             if (skillId != null) 'skillId': skillId,
             if (appraisalResult != null) 'appraisalResult': appraisalResult,
-            if (decisionsApplied != null)
-              'decisionsApplied': decisionsApplied,
+            if (decisionsApplied != null) 'decisionsApplied': decisionsApplied,
           },
         );
 

@@ -30,8 +30,7 @@ void main() {
         expect(span!.name, contains('test.span'));
       });
 
-      test('startEventSpan continues trace when parent context provided',
-          () {
+      test('startEventSpan continues trace when parent context provided', () {
         final event = testOpsEvent(eventType: 'test.child');
         final span = tracing.startEventSpan(
           event,

@@ -73,8 +73,7 @@ class PipelineException extends OpsException {
   });
 
   @override
-  String toString() =>
-      'PipelineException($code, pipeline=$pipelineId'
+  String toString() => 'PipelineException($code, pipeline=$pipelineId'
       '${stageId != null ? ', stage=$stageId' : ''}): $message';
 }
 
@@ -124,8 +123,7 @@ class StageException extends OpsException {
   }
 
   @override
-  String toString() =>
-      'StageException($code, stage=$stageId'
+  String toString() => 'StageException($code, stage=$stageId'
       '${handlerId != null ? ', handler=$handlerId' : ''}): $message';
 }
 
@@ -159,8 +157,7 @@ class RetryableOpsException extends OpsException {
   });
 
   @override
-  String toString() =>
-      'RetryableOpsException($code, attempt=$attemptNumber, '
+  String toString() => 'RetryableOpsException($code, attempt=$attemptNumber, '
       'nextRetryIn=${nextRetryIn.inMilliseconds}ms): $message';
 }
 
@@ -322,8 +319,7 @@ class ResourceException extends OpsException {
   });
 
   @override
-  String toString() =>
-      'ResourceException($code, type=$resourceType'
+  String toString() => 'ResourceException($code, type=$resourceType'
       '${resourceId != null ? ', id=$resourceId' : ''}): $message';
 }
 
@@ -354,8 +350,7 @@ class ValidationException extends OpsException {
   });
 
   @override
-  String toString() =>
-      'ValidationException($code): $message '
+  String toString() => 'ValidationException($code): $message '
       '[${errors.length} error(s): ${errors.map((e) => e.message).join('; ')}]';
 }
 
@@ -457,9 +452,11 @@ class RetryExecutor {
         // Apply jitter
         if (jitterFactor > 0) {
           final jitter = (delay.inMilliseconds * jitterFactor).round();
-          final offset = (DateTime.now().microsecond % (jitter * 2 + 1)) - jitter;
+          final offset =
+              (DateTime.now().microsecond % (jitter * 2 + 1)) - jitter;
           delay = Duration(
-            milliseconds: (delay.inMilliseconds + offset).clamp(0, maxDelay.inMilliseconds),
+            milliseconds: (delay.inMilliseconds + offset)
+                .clamp(0, maxDelay.inMilliseconds),
           );
         }
 
@@ -566,8 +563,8 @@ class AggregateError extends OpsException {
   final List<ExecutionError> errors;
 
   @override
-  bool get retryable => errors.any((e) =>
-      e.error is OpsException && (e.error as OpsException).retryable);
+  bool get retryable => errors.any(
+      (e) => e.error is OpsException && (e.error as OpsException).retryable);
 
   @override
   Duration get suggestedDelay => Duration.zero;
@@ -581,8 +578,7 @@ class AggregateError extends OpsException {
   });
 
   @override
-  String toString() =>
-      'AggregateError: $message (${errors.length} error(s))';
+  String toString() => 'AggregateError: $message (${errors.length} error(s))';
 }
 
 /// Collects errors from parallel execution.
@@ -658,9 +654,8 @@ class ErrorResponse {
       message: exception.message,
       details: exception.details,
       retryable: exception.retryable,
-      retryAfterMs: exception.retryable
-          ? exception.suggestedDelay.inMilliseconds
-          : null,
+      retryAfterMs:
+          exception.retryable ? exception.suggestedDelay.inMilliseconds : null,
       timestamp: DateTime.now(),
     );
   }

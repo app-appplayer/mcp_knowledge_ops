@@ -112,8 +112,7 @@ void main() {
       await persister.persist('stream-d', event2);
       await persister.persist('stream-d', event3);
 
-      final correlated =
-          await persister.readByCorrelation('corr-shared');
+      final correlated = await persister.readByCorrelation('corr-shared');
       expect(correlated, hasLength(2));
       expect(
         correlated.map((e) => e['eventId']).toList(),
@@ -123,8 +122,7 @@ void main() {
 
     test('readByCorrelation() returns empty for unknown correlationId',
         () async {
-      final events =
-          await persister.readByCorrelation('nonexistent-corr');
+      final events = await persister.readByCorrelation('nonexistent-corr');
       expect(events, isEmpty);
     });
 

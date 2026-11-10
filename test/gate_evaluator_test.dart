@@ -27,7 +27,10 @@ void main() {
         final context = testExecutionContext(
           state: {
             'stages': {
-              'stage-1': {'output': {'score': 0.95}, 'status': 'completed'}
+              'stage-1': {
+                'output': {'score': 0.95},
+                'status': 'completed'
+              }
             }
           },
         );
@@ -56,7 +59,10 @@ void main() {
         final context = testExecutionContext(
           state: {
             'stages': {
-              'stage-1': {'output': {'score': 0.5}, 'status': 'completed'}
+              'stage-1': {
+                'output': {'score': 0.5},
+                'status': 'completed'
+              }
             }
           },
         );
@@ -128,7 +134,10 @@ void main() {
         final context = testExecutionContext(
           state: {
             'stages': {
-              'stage-1': {'output': {'count': 10}, 'status': 'completed'}
+              'stage-1': {
+                'output': {'count': 10},
+                'status': 'completed'
+              }
             }
           },
         );
@@ -310,7 +319,10 @@ void main() {
         final context = testExecutionContext(
           state: {
             'stages': {
-              'stage-1': {'output': {'score': 0.5}, 'status': 'completed'}
+              'stage-1': {
+                'output': {'score': 0.5},
+                'status': 'completed'
+              }
             }
           },
         );
@@ -386,8 +398,7 @@ void main() {
 
         final result = await evaluator.evaluate(gate, context);
         expect(result.passed, isFalse);
-        expect(result.conditionResults.first.message,
-            contains('not found'));
+        expect(result.conditionResults.first.message, contains('not found'));
       });
 
       test('passes when approval is present and approved', () async {

@@ -141,7 +141,8 @@ class PipelineExecutor {
     ));
 
     // Check condition
-    if (stage.condition != null && !_evaluateCondition(stage.condition!, context)) {
+    if (stage.condition != null &&
+        !_evaluateCondition(stage.condition!, context)) {
       final result = StageResult(
         stageId: stage.id,
         status: StageStatus.skipped,
@@ -176,8 +177,9 @@ class PipelineExecutor {
     final stageInput = _buildStageInput(stage, context);
 
     // Execute with retry
-    final retryConfig = context.config.retryPolicy?.getConfigForStage(stage.id) ??
-        stage.retryConfig;
+    final retryConfig =
+        context.config.retryPolicy?.getConfigForStage(stage.id) ??
+            stage.retryConfig;
 
     try {
       final output = await _executeWithRetry(

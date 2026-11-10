@@ -409,8 +409,7 @@ class DeadlineApproachingEvent extends OpsEvent {
             'executionId': executionId,
             'remainingMs': remaining.inMilliseconds,
             if (scheduleId != null) 'scheduleId': scheduleId,
-            if (deadlineAt != null)
-              'deadlineAt': deadlineAt.toIso8601String(),
+            if (deadlineAt != null) 'deadlineAt': deadlineAt.toIso8601String(),
             if (escalationLevel != null) 'escalationLevel': escalationLevel,
           },
           meta: const OpsEventMeta(source: 'scheduler'),

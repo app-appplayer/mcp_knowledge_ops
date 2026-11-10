@@ -478,8 +478,8 @@ class ResilientRetryConfig {
 
     // Add jitter
     if (jitterFactor > 0) {
-      final jitter = (delayMs * jitterFactor * (Random().nextDouble() * 2 - 1))
-          .toInt();
+      final jitter =
+          (delayMs * jitterFactor * (Random().nextDouble() * 2 - 1)).toInt();
       delayMs = (delayMs + jitter).clamp(0, maxDelay.inMilliseconds);
     }
 

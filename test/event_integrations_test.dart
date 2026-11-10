@@ -109,8 +109,7 @@ void main() {
       expect(handlers, isA<NotificationEventHandlers>());
     });
 
-    test('registerHandlers adds handlers for all notification event types',
-        () {
+    test('registerHandlers adds handlers for all notification event types', () {
       final loggerPair = testLogger();
       final router = EventRouter(logger: loggerPair.$1);
 
@@ -130,8 +129,7 @@ void main() {
       );
     });
 
-    test('onNotificationRequired is no-op without notification port',
-        () async {
+    test('onNotificationRequired is no-op without notification port', () async {
       final handlers = NotificationEventHandlers();
       final event = testOpsEvent(
         eventType: 'ops.workflow.approval_requested',

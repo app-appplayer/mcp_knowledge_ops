@@ -10,16 +10,13 @@ import '../ports/ops_port.dart';
 import 'ops_event.dart';
 
 /// Key conventions for event persistence in KvStoragePort.
-class EventStorageKeys {
-  EventStorageKeys._();
-
+abstract final class EventStorageKeys {
   /// Event log: ordered by position within a logical stream.
   static String eventLog(String streamId, int position) =>
       'event:$streamId:${position.toString().padLeft(10, '0')}';
 
   /// Stream position counter.
-  static String streamPosition(String streamId) =>
-      'event:position:$streamId';
+  static String streamPosition(String streamId) => 'event:position:$streamId';
 
   /// Correlation index (list of event keys with same correlationId).
   static String correlationIndex(String correlationId) =>
@@ -30,9 +27,7 @@ class EventStorageKeys {
 ///
 /// Provides consistent naming conventions for event streams
 /// associated with various ops execution concepts.
-class EventStreams {
-  EventStreams._();
-
+abstract final class EventStreams {
   /// Stream ID for a pipeline execution.
   static String pipeline(String pipelineId) => 'pipeline-$pipelineId';
 

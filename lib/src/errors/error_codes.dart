@@ -35,28 +35,35 @@ enum OpsErrorCode {
   // ─────────────────────────────────────────────────────────────────
 
   /// Pipeline definition not found.
-  pipelineNotFound('OPS-PIPE-001', 'Pipeline Not Found', OpsErrorCategory.pipeline),
+  pipelineNotFound(
+      'OPS-PIPE-001', 'Pipeline Not Found', OpsErrorCategory.pipeline),
 
   /// Pipeline definition is invalid or malformed.
-  invalidPipeline('OPS-PIPE-002', 'Invalid Pipeline', OpsErrorCategory.pipeline),
+  invalidPipeline(
+      'OPS-PIPE-002', 'Invalid Pipeline', OpsErrorCategory.pipeline),
 
   /// Pipeline is already running and concurrent execution is not allowed.
-  pipelineAlreadyRunning('OPS-PIPE-003', 'Pipeline Already Running', OpsErrorCategory.pipeline),
+  pipelineAlreadyRunning(
+      'OPS-PIPE-003', 'Pipeline Already Running', OpsErrorCategory.pipeline),
 
   /// A stage within the pipeline failed.
   stageFailed('OPS-PIPE-004', 'Stage Failed', OpsErrorCategory.pipeline),
 
   /// Pipeline execution was cancelled.
-  pipelineCancelled('OPS-PIPE-005', 'Pipeline Cancelled', OpsErrorCategory.pipeline),
+  pipelineCancelled(
+      'OPS-PIPE-005', 'Pipeline Cancelled', OpsErrorCategory.pipeline),
 
   /// Attempted an invalid stage transition.
-  invalidStageTransition('OPS-PIPE-006', 'Invalid Stage Transition', OpsErrorCategory.pipeline),
+  invalidStageTransition(
+      'OPS-PIPE-006', 'Invalid Stage Transition', OpsErrorCategory.pipeline),
 
   /// A dependency required by a stage failed.
-  dependencyFailed('OPS-PIPE-007', 'Dependency Failed', OpsErrorCategory.pipeline),
+  dependencyFailed(
+      'OPS-PIPE-007', 'Dependency Failed', OpsErrorCategory.pipeline),
 
   /// Checkpoint save or restore failed during pipeline execution.
-  checkpointFailed('OPS-PIPE-008', 'Checkpoint Failed', OpsErrorCategory.pipeline),
+  checkpointFailed(
+      'OPS-PIPE-008', 'Checkpoint Failed', OpsErrorCategory.pipeline),
 
   /// Resume from checkpoint failed.
   resumeFailed('OPS-PIPE-009', 'Resume Failed', OpsErrorCategory.pipeline),
@@ -66,10 +73,12 @@ enum OpsErrorCode {
   // ─────────────────────────────────────────────────────────────────
 
   /// Workflow definition not found.
-  workflowNotFound('OPS-WKFL-001', 'Workflow Not Found', OpsErrorCategory.workflow),
+  workflowNotFound(
+      'OPS-WKFL-001', 'Workflow Not Found', OpsErrorCategory.workflow),
 
   /// Workflow definition is invalid or malformed.
-  invalidWorkflow('OPS-WKFL-002', 'Invalid Workflow', OpsErrorCategory.workflow),
+  invalidWorkflow(
+      'OPS-WKFL-002', 'Invalid Workflow', OpsErrorCategory.workflow),
 
   /// A stage within the workflow timed out.
   stageTimeout('OPS-WKFL-003', 'Stage Timeout', OpsErrorCategory.workflow),
@@ -78,16 +87,20 @@ enum OpsErrorCode {
   reviewRejected('OPS-WKFL-004', 'Review Rejected', OpsErrorCategory.workflow),
 
   /// An approval stage was rejected.
-  approvalRejected('OPS-WKFL-005', 'Approval Rejected', OpsErrorCategory.workflow),
+  approvalRejected(
+      'OPS-WKFL-005', 'Approval Rejected', OpsErrorCategory.workflow),
 
   /// An approval stage timed out waiting for approvers.
-  approvalTimeout('OPS-WKFL-006', 'Approval Timeout', OpsErrorCategory.workflow),
+  approvalTimeout(
+      'OPS-WKFL-006', 'Approval Timeout', OpsErrorCategory.workflow),
 
   /// Attempted an invalid workflow state transition.
-  invalidStateTransition('OPS-WKFL-007', 'Invalid State Transition', OpsErrorCategory.workflow),
+  invalidStateTransition(
+      'OPS-WKFL-007', 'Invalid State Transition', OpsErrorCategory.workflow),
 
   /// Workflow has already completed and cannot be modified.
-  alreadyCompleted('OPS-WKFL-008', 'Already Completed', OpsErrorCategory.workflow),
+  alreadyCompleted(
+      'OPS-WKFL-008', 'Already Completed', OpsErrorCategory.workflow),
 
   // ─────────────────────────────────────────────────────────────────
   // Gate: OPS-GATE-001 through 005
@@ -103,7 +116,8 @@ enum OpsErrorCode {
   missingMetric('OPS-GATE-003', 'Missing Metric', OpsErrorCategory.gate),
 
   /// Gate expression is syntactically or semantically invalid.
-  invalidExpression('OPS-GATE-004', 'Invalid Expression', OpsErrorCategory.gate),
+  invalidExpression(
+      'OPS-GATE-004', 'Invalid Expression', OpsErrorCategory.gate),
 
   /// A numeric threshold was not met.
   thresholdNotMet('OPS-GATE-005', 'Threshold Not Met', OpsErrorCategory.gate),
@@ -116,32 +130,40 @@ enum OpsErrorCode {
   noApprovers('OPS-APRV-001', 'No Approvers', OpsErrorCategory.approval),
 
   /// The specified approver is not valid or not authorized.
-  invalidApprover('OPS-APRV-002', 'Invalid Approver', OpsErrorCategory.approval),
+  invalidApprover(
+      'OPS-APRV-002', 'Invalid Approver', OpsErrorCategory.approval),
 
   /// Approval delegation is not allowed for this stage.
-  delegationNotAllowed('OPS-APRV-003', 'Delegation Not Allowed', OpsErrorCategory.approval),
+  delegationNotAllowed(
+      'OPS-APRV-003', 'Delegation Not Allowed', OpsErrorCategory.approval),
 
   /// Escalation to a higher-level approver failed.
-  escalationFailed('OPS-APRV-004', 'Escalation Failed', OpsErrorCategory.approval),
+  escalationFailed(
+      'OPS-APRV-004', 'Escalation Failed', OpsErrorCategory.approval),
 
   /// Required quorum of approvers was not reached.
-  quorumNotReached('OPS-APRV-005', 'Quorum Not Reached', OpsErrorCategory.approval),
+  quorumNotReached(
+      'OPS-APRV-005', 'Quorum Not Reached', OpsErrorCategory.approval),
 
   /// The approval request has already been processed.
-  alreadyProcessed('OPS-APRV-006', 'Already Processed', OpsErrorCategory.approval),
+  alreadyProcessed(
+      'OPS-APRV-006', 'Already Processed', OpsErrorCategory.approval),
 
   /// Self-approval is not allowed for this stage.
-  selfApprovalNotAllowed('OPS-APRV-007', 'Self-Approval Not Allowed', OpsErrorCategory.approval),
+  selfApprovalNotAllowed(
+      'OPS-APRV-007', 'Self-Approval Not Allowed', OpsErrorCategory.approval),
 
   // ─────────────────────────────────────────────────────────────────
   // Execution: OPS-EXEC-001 through 007
   // ─────────────────────────────────────────────────────────────────
 
   /// Execution run not found.
-  executionNotFound('OPS-EXEC-001', 'Execution Not Found', OpsErrorCategory.execution),
+  executionNotFound(
+      'OPS-EXEC-001', 'Execution Not Found', OpsErrorCategory.execution),
 
   /// Execution exceeded its overall timeout.
-  executionTimeout('OPS-EXEC-002', 'Execution Timeout', OpsErrorCategory.execution),
+  executionTimeout(
+      'OPS-EXEC-002', 'Execution Timeout', OpsErrorCategory.execution),
 
   /// All retry attempts have been exhausted.
   retryExhausted('OPS-EXEC-003', 'Retry Exhausted', OpsErrorCategory.execution),
@@ -156,23 +178,28 @@ enum OpsErrorCode {
   invalidState('OPS-EXEC-006', 'Invalid State', OpsErrorCategory.execution),
 
   /// Concurrency limit has been reached.
-  concurrencyLimit('OPS-EXEC-007', 'Concurrency Limit', OpsErrorCategory.execution),
+  concurrencyLimit(
+      'OPS-EXEC-007', 'Concurrency Limit', OpsErrorCategory.execution),
 
   // ─────────────────────────────────────────────────────────────────
   // Philosophy: PHIL-*
   // ─────────────────────────────────────────────────────────────────
 
   /// Ethos not found or not configured.
-  ethosNotFound('PHIL-EVAL-001', 'Ethos Not Found', OpsErrorCategory.philosophy),
+  ethosNotFound(
+      'PHIL-EVAL-001', 'Ethos Not Found', OpsErrorCategory.philosophy),
 
   /// Hard prohibition violated.
-  prohibitionViolated('PHIL-PROH-001', 'Hard Prohibition Violated', OpsErrorCategory.philosophy),
+  prohibitionViolated('PHIL-PROH-001', 'Hard Prohibition Violated',
+      OpsErrorCategory.philosophy),
 
   /// Philosophy intervention failed.
-  philosophyInterventionFailed('PHIL-INTV-001', 'Intervention Failed', OpsErrorCategory.philosophy),
+  philosophyInterventionFailed(
+      'PHIL-INTV-001', 'Intervention Failed', OpsErrorCategory.philosophy),
 
   /// Tension detection not supported by adapter.
-  tensionDetectionUnsupported('PHIL-TENS-001', 'Tension Detection Unsupported', OpsErrorCategory.philosophy);
+  tensionDetectionUnsupported('PHIL-TENS-001', 'Tension Detection Unsupported',
+      OpsErrorCategory.philosophy);
 
   /// Unique code string (e.g. "OPS-PIPE-001").
   final String code;

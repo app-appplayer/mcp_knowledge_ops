@@ -463,8 +463,7 @@ class ExecutionQueue {
     }
 
     // Calculate error rate
-    final errorRate =
-        totalFinished > 0 ? _failedCount / totalFinished : 0.0;
+    final errorRate = totalFinished > 0 ? _failedCount / totalFinished : 0.0;
 
     return QueueStats(
       pending: _queue.length,
@@ -631,7 +630,8 @@ class Schedule {
     // Support legacy enabled flag by mapping to status
     ScheduleStatus? resolvedStatus = status;
     if (resolvedStatus == null && enabled != null) {
-      resolvedStatus = enabled ? ScheduleStatus.active : ScheduleStatus.disabled;
+      resolvedStatus =
+          enabled ? ScheduleStatus.active : ScheduleStatus.disabled;
     }
 
     return Schedule(
@@ -1100,8 +1100,7 @@ class CompositeTrigger implements Trigger {
     _firedTriggers[triggerId] = now;
 
     // Track sequence start time
-    if (operator == CompositeOperator.sequence &&
-        _sequenceStartedAt == null) {
+    if (operator == CompositeOperator.sequence && _sequenceStartedAt == null) {
       _sequenceStartedAt = now;
     }
   }
@@ -1346,9 +1345,7 @@ class Scheduler {
 
     // Register event subscriptions
     if (trigger is EventTrigger) {
-      _eventSubscriptions
-          .putIfAbsent(trigger.eventType, () => [])
-          .add(taskId);
+      _eventSubscriptions.putIfAbsent(trigger.eventType, () => []).add(taskId);
     }
 
     // Register event subscriptions for composite triggers containing events
@@ -1606,8 +1603,7 @@ class Scheduler {
       final executionTime = completedAt.difference(startTime);
 
       // Update tracking state
-      _runningCounts[task.id] =
-          (_runningCounts[task.id] ?? 1) - 1;
+      _runningCounts[task.id] = (_runningCounts[task.id] ?? 1) - 1;
       _dedupeTracker[task.id] = completedAt;
       _lastActivityAt = completedAt;
 
@@ -1629,8 +1625,7 @@ class Scheduler {
       final executionTime = completedAt.difference(startTime);
 
       // Decrement running count
-      _runningCounts[task.id] =
-          (_runningCounts[task.id] ?? 1) - 1;
+      _runningCounts[task.id] = (_runningCounts[task.id] ?? 1) - 1;
       _lastActivityAt = completedAt;
 
       // Record failure in queue stats
@@ -1677,9 +1672,7 @@ class Scheduler {
   ) {
     for (final child in trigger.triggers) {
       if (child is EventTrigger) {
-        _eventSubscriptions
-            .putIfAbsent(child.eventType, () => [])
-            .add(taskId);
+        _eventSubscriptions.putIfAbsent(child.eventType, () => []).add(taskId);
       }
     }
   }
@@ -2023,9 +2016,7 @@ enum FilterOperator {
 // ═══════════════════════════════════════════════════════════════════
 
 /// Standard system event type constants for scheduler integration.
-abstract class SystemEventType {
-  SystemEventType._();
-
+abstract final class SystemEventType {
   static const scheduleCreated = 'scheduler.schedule.created';
   static const scheduleUpdated = 'scheduler.schedule.updated';
   static const scheduleDeleted = 'scheduler.schedule.deleted';

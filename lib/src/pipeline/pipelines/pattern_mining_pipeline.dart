@@ -52,7 +52,8 @@ class PatternMiningPipeline
         name: 'Collect Signals',
         order: 1,
         handler: 'mining.collectSignals',
-        description: 'Gather signals via FactsPort.queryFacts within time window',
+        description:
+            'Gather signals via FactsPort.queryFacts within time window',
       ),
       const PipelineStage(
         id: 'preprocess',
@@ -93,8 +94,7 @@ class PatternMiningPipeline
         handler: 'philosophy.checkProhibitions',
         inputMapping: {'validatedPatterns': 'validate_patterns'},
         condition: 'ports.philosophy != null',
-        description:
-            'Validate patterns via PhilosophyPort.checkProhibitions',
+        description: 'Validate patterns via PhilosophyPort.checkProhibitions',
       ),
       const PipelineStage(
         id: 'generate_skill_candidates',

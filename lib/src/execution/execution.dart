@@ -10,5 +10,6 @@ export 'stage_executor.dart';
 export 'gate_evaluator.dart';
 export 'checkpoint_manager.dart';
 export 'handler_registry.dart';
-export 'parallel_executor.dart';
+export 'parallel_executor.dart'
+    show ParallelExecutionException, ParallelStageExecutor;
 export 'circuit_breaker.dart';

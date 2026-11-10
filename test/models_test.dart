@@ -112,7 +112,8 @@ void main() {
         config: const ExecutionConfig(),
       );
 
-      const output = StageOutput(data: {'result': 'ok'}, status: StageStatus.completed);
+      const output =
+          StageOutput(data: {'result': 'ok'}, status: StageStatus.completed);
       ctx.recordStageOutput('stage-1', output);
 
       final retrieved = ctx.getStageOutput('stage-1');
@@ -144,7 +145,10 @@ void main() {
         id: 'cp-1',
         runId: 'run-1',
         name: 'test-cp',
-        state: {'workspaceId': 'ws-1', 'variables': {'key': 'val'}},
+        state: {
+          'workspaceId': 'ws-1',
+          'variables': {'key': 'val'}
+        },
         stageOutputs: {},
         lastCompletedStage: 'stage-2',
         createdAt: DateTime(2024, 1, 1),
@@ -337,7 +341,8 @@ void main() {
         name: 'test',
         state: {'key': 'value'},
         stageOutputs: {
-          'stage-1': const StageOutput(data: 'output', status: StageStatus.completed),
+          'stage-1':
+              const StageOutput(data: 'output', status: StageStatus.completed),
         },
         lastCompletedStage: 'stage-1',
         executionState: ExecutionState.paused,
@@ -361,31 +366,35 @@ void main() {
   group('ExecutionState', () {
     test('has all 10 values', () {
       expect(ExecutionState.values.length, equals(10));
-      expect(ExecutionState.values, containsAll([
-        ExecutionState.pending,
-        ExecutionState.validating,
-        ExecutionState.running,
-        ExecutionState.waitingReview,
-        ExecutionState.waitingApproval,
-        ExecutionState.paused,
-        ExecutionState.completed,
-        ExecutionState.failed,
-        ExecutionState.cancelled,
-        ExecutionState.rolledBack,
-      ]));
+      expect(
+          ExecutionState.values,
+          containsAll([
+            ExecutionState.pending,
+            ExecutionState.validating,
+            ExecutionState.running,
+            ExecutionState.waitingReview,
+            ExecutionState.waitingApproval,
+            ExecutionState.paused,
+            ExecutionState.completed,
+            ExecutionState.failed,
+            ExecutionState.cancelled,
+            ExecutionState.rolledBack,
+          ]));
     });
   });
 
   group('CheckpointStatus', () {
     test('has all 5 values', () {
       expect(CheckpointStatus.values.length, equals(5));
-      expect(CheckpointStatus.values, containsAll([
-        CheckpointStatus.active,
-        CheckpointStatus.resumed,
-        CheckpointStatus.expired,
-        CheckpointStatus.superseded,
-        CheckpointStatus.invalidated,
-      ]));
+      expect(
+          CheckpointStatus.values,
+          containsAll([
+            CheckpointStatus.active,
+            CheckpointStatus.resumed,
+            CheckpointStatus.expired,
+            CheckpointStatus.superseded,
+            CheckpointStatus.invalidated,
+          ]));
     });
   });
 
@@ -418,12 +427,14 @@ void main() {
 
   group('OnFailure', () {
     test('has all values', () {
-      expect(OnFailure.values, containsAll([
-        OnFailure.fail,
-        OnFailure.skip,
-        OnFailure.retry,
-        OnFailure.manualOverride,
-      ]));
+      expect(
+          OnFailure.values,
+          containsAll([
+            OnFailure.fail,
+            OnFailure.skip,
+            OnFailure.retry,
+            OnFailure.manualOverride,
+          ]));
     });
   });
 
@@ -524,7 +535,8 @@ void main() {
         name: 'Quality Gate',
         afterStage: 's1',
         conditions: [
-          GateCondition(type: ConditionType.threshold, metric: 'coverage', value: 80),
+          GateCondition(
+              type: ConditionType.threshold, metric: 'coverage', value: 80),
           GateCondition(type: ConditionType.approval, approvers: ['user-1']),
         ],
       );
@@ -535,21 +547,25 @@ void main() {
 
   group('GateCondition', () {
     test('all ConditionType values', () {
-      expect(ConditionType.values, containsAll([
-        ConditionType.threshold,
-        ConditionType.expression,
-        ConditionType.approval,
-      ]));
+      expect(
+          ConditionType.values,
+          containsAll([
+            ConditionType.threshold,
+            ConditionType.expression,
+            ConditionType.approval,
+          ]));
     });
   });
 
   group('GateFailure', () {
     test('all values', () {
-      expect(GateFailure.values, containsAll([
-        GateFailure.block,
-        GateFailure.warn,
-        GateFailure.log,
-      ]));
+      expect(
+          GateFailure.values,
+          containsAll([
+            GateFailure.block,
+            GateFailure.warn,
+            GateFailure.log,
+          ]));
     });
   });
 
@@ -593,8 +609,7 @@ void main() {
     });
 
     test('toJson', () {
-      final result =
-          ConditionResult.failed('c1', actual: 50, expected: 80);
+      final result = ConditionResult.failed('c1', actual: 50, expected: 80);
       final json = result.toJson();
       expect(json['conditionId'], equals('c1'));
       expect(json['passed'], isFalse);
@@ -947,12 +962,14 @@ void main() {
 
   group('WorkflowStageType', () {
     test('has all values', () {
-      expect(WorkflowStageType.values, containsAll([
-        WorkflowStageType.task,
-        WorkflowStageType.gate,
-        WorkflowStageType.review,
-        WorkflowStageType.approval,
-      ]));
+      expect(
+          WorkflowStageType.values,
+          containsAll([
+            WorkflowStageType.task,
+            WorkflowStageType.gate,
+            WorkflowStageType.review,
+            WorkflowStageType.approval,
+          ]));
     });
   });
 }

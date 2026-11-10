@@ -9,8 +9,6 @@ import '../observability/logger.dart';
 import '../observability/metrics_collector.dart';
 import '../ports/ops_port.dart';
 
-import 'ops_exception.dart';
-
 // ---------------------------------------------------------------------------
 // Configuration
 // ---------------------------------------------------------------------------
@@ -227,7 +225,8 @@ class RollbackHandler {
 
       timer.observeDuration();
 
-      final status = hasFailures ? RollbackStatus.failed : RollbackStatus.success;
+      final status =
+          hasFailures ? RollbackStatus.failed : RollbackStatus.success;
       final failedCount = stageResults.where((r) => !r.success).length;
 
       _metrics.increment('ops.rollback.total', 1, {
@@ -251,9 +250,6 @@ class RollbackHandler {
         stageResults: stageResults,
         message: message,
       );
-    } on OpsException {
-      timer.observeDuration();
-      rethrow;
     } catch (e, stack) {
       timer.observeDuration();
 
@@ -282,9 +278,7 @@ class RollbackHandler {
   ) {
     if (config.rollbackStages.isNotEmpty) {
       // Only rollback explicitly listed stages that have outputs
-      return config.rollbackStages
-          .where(stageOutputs.containsKey)
-          .toList();
+      return config.rollbackStages.where(stageOutputs.containsKey).toList();
     }
     // Rollback all stages that produced output
     return stageOutputs.keys.toList();
@@ -298,15 +292,6 @@ class RollbackHandler {
     RollbackConfig config,
   ) async {
     final kvStorage = _ports.kvStorage;
-
-    // ignore: unnecessary_null_comparison
-    if (kvStorage == null) {
-      throw ResourceException(
-        'KvStoragePort is required for rollback operations',
-        code: 'OPS-EXEC-005',
-        resourceType: 'kvStorage',
-      );
-    }
 
     try {
       final stageTimer = _metrics.timer('ops.rollback.stage.duration', {

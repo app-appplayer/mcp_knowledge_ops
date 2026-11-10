@@ -85,10 +85,8 @@ void main() {
     });
 
     test('query() filters by resource types', () async {
-      await recorder.record(
-          createTestEvent(resourceType: 'pipeline'));
-      await recorder.record(
-          createTestEvent(resourceType: 'workflow'));
+      await recorder.record(createTestEvent(resourceType: 'pipeline'));
+      await recorder.record(createTestEvent(resourceType: 'workflow'));
 
       final results = await recorder.query(
         const AuditFilter(resourceTypes: ['workflow']),
@@ -97,12 +95,9 @@ void main() {
     });
 
     test('query() filters by outcomes', () async {
-      await recorder.record(
-          createTestEvent(outcome: AuditOutcome.success));
-      await recorder.record(
-          createTestEvent(outcome: AuditOutcome.failure));
-      await recorder.record(
-          createTestEvent(outcome: AuditOutcome.denied));
+      await recorder.record(createTestEvent(outcome: AuditOutcome.success));
+      await recorder.record(createTestEvent(outcome: AuditOutcome.failure));
+      await recorder.record(createTestEvent(outcome: AuditOutcome.denied));
 
       final results = await recorder.query(
         const AuditFilter(outcomes: [AuditOutcome.failure]),
@@ -242,7 +237,8 @@ void main() {
         timestamp: DateTime(2024),
         actor: const AuditActor(type: ActorType.user, id: 'u-1', name: 'Admin'),
         action: 'pipeline.start',
-        resource: const AuditResource(type: 'pipeline', id: 'p-1', name: 'Ingest'),
+        resource:
+            const AuditResource(type: 'pipeline', id: 'p-1', name: 'Ingest'),
         outcome: AuditOutcome.success,
         context: const AuditContext(workspaceId: 'ws-1', traceId: 'trace-1'),
       );
@@ -457,21 +453,31 @@ void main() {
 
   group('Audit enums', () {
     test('AuditOutcome has all values', () {
-      expect(AuditOutcome.values,
-          containsAll([AuditOutcome.success, AuditOutcome.failure,
-              AuditOutcome.denied]));
+      expect(
+          AuditOutcome.values,
+          containsAll([
+            AuditOutcome.success,
+            AuditOutcome.failure,
+            AuditOutcome.denied
+          ]));
     });
 
     test('ActorType has all values', () {
-      expect(ActorType.values,
-          containsAll([ActorType.user, ActorType.system,
-              ActorType.service, ActorType.schedule]));
+      expect(
+          ActorType.values,
+          containsAll([
+            ActorType.user,
+            ActorType.system,
+            ActorType.service,
+            ActorType.schedule
+          ]));
     });
 
     test('ExportFormat has all values', () {
-      expect(ExportFormat.values,
-          containsAll([ExportFormat.json, ExportFormat.csv,
-              ExportFormat.parquet]));
+      expect(
+          ExportFormat.values,
+          containsAll(
+              [ExportFormat.json, ExportFormat.csv, ExportFormat.parquet]));
     });
   });
 }

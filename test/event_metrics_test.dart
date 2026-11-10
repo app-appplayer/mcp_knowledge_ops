@@ -150,8 +150,8 @@ void main() {
       expect(EventMetricNames.eventsConsumed, equals('ops.events.processed'));
       expect(EventMetricNames.eventsFailed, equals('ops.events.failed'));
       expect(EventMetricNames.eventsRetried, equals('ops.events.retried'));
-      expect(EventMetricNames.eventLatency,
-          equals('ops.events.processing_time'));
+      expect(
+          EventMetricNames.eventLatency, equals('ops.events.processing_time'));
       expect(EventMetricNames.dlqSize, equals('ops.events.dlq.size'));
       expect(EventMetricNames.handlerDuration,
           equals('ops.events.handler.duration'));

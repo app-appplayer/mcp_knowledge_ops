@@ -227,10 +227,7 @@ class PersistentCheckpointManager implements CheckpointManager {
 
       final checkpoint = await load(id);
       if (checkpoint != null) {
-        if (latest == null ||
-            checkpoint.createdAt.isAfter(latest.createdAt)) {
-          latest = checkpoint;
-        }
+        latest = checkpoint;
         break; // Since we iterate newest first, first match is latest
       }
     }

@@ -142,7 +142,8 @@ class OpsEvent {
       runId: p['runId'] as String? ?? '',
       workspaceId: p['workspaceId'] as String? ?? '',
       timestamp: portEvent.timestamp,
-      payload: (p['payload'] ?? p['data']) as Map<String, dynamic>? ?? Map<String, dynamic>.from(p),
+      payload: (p['payload'] ?? p['data']) as Map<String, dynamic>? ??
+          Map<String, dynamic>.from(p),
       meta: metaJson != null
           ? OpsEventMeta.fromJson(metaJson)
           : OpsEventMeta(source: portEvent.source ?? 'unknown'),

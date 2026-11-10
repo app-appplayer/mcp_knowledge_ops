@@ -79,7 +79,8 @@ void main() {
         initialDelay: Duration(milliseconds: 100),
       );
 
-      expect(policy.delayForAttempt(1), equals(const Duration(milliseconds: 100)));
+      expect(
+          policy.delayForAttempt(1), equals(const Duration(milliseconds: 100)));
     });
 
     test('delayForAttempt calculates exponential backoff', () {
@@ -90,11 +91,14 @@ void main() {
       );
 
       // attempt 1 => 100ms
-      expect(policy.delayForAttempt(1), equals(const Duration(milliseconds: 100)));
+      expect(
+          policy.delayForAttempt(1), equals(const Duration(milliseconds: 100)));
       // attempt 2 => 100 * 2 = 200ms
-      expect(policy.delayForAttempt(2), equals(const Duration(milliseconds: 200)));
+      expect(
+          policy.delayForAttempt(2), equals(const Duration(milliseconds: 200)));
       // attempt 3 => 200 * 2 = 400ms
-      expect(policy.delayForAttempt(3), equals(const Duration(milliseconds: 400)));
+      expect(
+          policy.delayForAttempt(3), equals(const Duration(milliseconds: 400)));
     });
 
     test('delayForAttempt caps at maxDelay', () {
@@ -115,8 +119,10 @@ void main() {
         initialDelay: Duration(milliseconds: 500),
       );
 
-      expect(policy.delayForAttempt(0), equals(const Duration(milliseconds: 500)));
-      expect(policy.delayForAttempt(-1), equals(const Duration(milliseconds: 500)));
+      expect(
+          policy.delayForAttempt(0), equals(const Duration(milliseconds: 500)));
+      expect(policy.delayForAttempt(-1),
+          equals(const Duration(milliseconds: 500)));
     });
   });
 

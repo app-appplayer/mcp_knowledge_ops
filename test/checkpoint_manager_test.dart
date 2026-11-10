@@ -89,8 +89,7 @@ void main() {
       expect(latest!.id, equals('cp-new'));
     });
 
-    test('loadLatest returns null when no active checkpoints exist',
-        () async {
+    test('loadLatest returns null when no active checkpoints exist', () async {
       final result = await manager.loadLatest('nonexistent-run');
       expect(result, isNull);
     });
@@ -178,10 +177,8 @@ void main() {
 
       await manager.invalidateForRun('run-1');
 
-      expect(
-          manager.getStatus('cp-1'), equals(CheckpointStatus.invalidated));
-      expect(
-          manager.getStatus('cp-2'), equals(CheckpointStatus.invalidated));
+      expect(manager.getStatus('cp-1'), equals(CheckpointStatus.invalidated));
+      expect(manager.getStatus('cp-2'), equals(CheckpointStatus.invalidated));
       // run-2 should remain unaffected
       expect(manager.getStatus('cp-3'), equals(CheckpointStatus.active));
     });
@@ -415,8 +412,7 @@ void main() {
     });
 
     test('isResumable returns true for waitingApproval', () {
-      final cp =
-          testCheckpoint(executionState: ExecutionState.waitingApproval);
+      final cp = testCheckpoint(executionState: ExecutionState.waitingApproval);
       expect(cp.isResumable, isTrue);
     });
 

@@ -116,9 +116,7 @@ class RunbookExecutor {
         // Run pre-checks
         if (step.preChecks.isNotEmpty) {
           final preCheckResults = _evaluateChecks(step.preChecks, context);
-          final failedChecks = preCheckResults
-              .where((r) => !r.passed)
-              .toList();
+          final failedChecks = preCheckResults.where((r) => !r.passed).toList();
           if (failedChecks.isNotEmpty) {
             final hasFatalFailure = failedChecks.any((r) {
               final check = step.preChecks.firstWhere((c) => c.name == r.name);
@@ -128,7 +126,8 @@ class RunbookExecutor {
               stepResults.add(RunbookStepResult(
                 stepId: step.id,
                 success: false,
-                error: 'Pre-check failed: ${failedChecks.map((r) => r.name).join(', ')}',
+                error:
+                    'Pre-check failed: ${failedChecks.map((r) => r.name).join(', ')}',
                 duration: Duration.zero,
               ));
               if (step.optional) continue;
@@ -146,9 +145,8 @@ class RunbookExecutor {
         // Run post-checks on success
         if (stepResult.success && step.postChecks.isNotEmpty) {
           final postCheckResults = _evaluateChecks(step.postChecks, context);
-          final failedChecks = postCheckResults
-              .where((r) => !r.passed)
-              .toList();
+          final failedChecks =
+              postCheckResults.where((r) => !r.passed).toList();
           if (failedChecks.isNotEmpty) {
             final hasFatalFailure = failedChecks.any((r) {
               final check = step.postChecks.firstWhere((c) => c.name == r.name);
@@ -158,7 +156,8 @@ class RunbookExecutor {
               stepResults.add(RunbookStepResult(
                 stepId: step.id,
                 success: false,
-                error: 'Post-check failed: ${failedChecks.map((r) => r.name).join(', ')}',
+                error:
+                    'Post-check failed: ${failedChecks.map((r) => r.name).join(', ')}',
                 duration: stepResult.duration,
               ));
               if (step.optional) continue;
@@ -569,9 +568,8 @@ class RunbookExecutor {
       return {'approved': true, 'method': 'auto'};
     }
 
-    final approvers = (action.config['approvers'] as List<dynamic>?)
-            ?.cast<String>() ??
-        [];
+    final approvers =
+        (action.config['approvers'] as List<dynamic>?)?.cast<String>() ?? [];
     final requiredApprovals = action.config['requiredApprovals'] as int? ?? 1;
     final timeoutSeconds = action.config['timeout'] as int?;
 
@@ -579,18 +577,21 @@ class RunbookExecutor {
       requestId: generateId('${context.runId}_approval'),
       requestType: 'runbook_step',
       requesterId: context.workspaceId,
-      description: action.config['description'] as String? ?? 'Runbook approval required',
+      description: action.config['description'] as String? ??
+          'Runbook approval required',
       context: {
         'runId': context.runId,
         'workspaceId': context.workspaceId,
         'requiredApprovals': requiredApprovals,
       },
       approverIds: approvers,
-      timeout: timeoutSeconds != null ? Duration(seconds: timeoutSeconds) : null,
+      timeout:
+          timeoutSeconds != null ? Duration(seconds: timeoutSeconds) : null,
     ));
 
     if (result.isRejected) {
-      throw Exception('Approval rejected: ${result.reason ?? 'no reason provided'}');
+      throw Exception(
+          'Approval rejected: ${result.reason ?? 'no reason provided'}');
     }
 
     if (!result.isApproved) {
@@ -643,7 +644,9 @@ class RunbookExecutor {
                 '==' => value == threshold,
                 _ => false,
               };
-              message = passed ? null : 'Metric "$metricName" ($value) $op $threshold failed';
+              message = passed
+                  ? null
+                  : 'Metric "$metricName" ($value) $op $threshold failed';
             }
           } else {
             passed = false;
@@ -678,10 +681,8 @@ class RunbookExecutor {
   ) async {
     context.state['_rolledBack'] = true;
 
-    final successfulStepIds = completedSteps
-        .where((r) => r.success)
-        .map((r) => r.stepId)
-        .toList();
+    final successfulStepIds =
+        completedSteps.where((r) => r.success).map((r) => r.stepId).toList();
     context.state['_rollbackSteps'] = successfulStepIds;
 
     // Execute configured rollback steps if available

@@ -195,7 +195,10 @@ void main() {
         runId: 'run-rt',
         workspaceId: 'ws-rt',
         timestamp: testTimestamp,
-        payload: {'nested': {'a': 1}, 'list': [1, 2, 3]},
+        payload: {
+          'nested': {'a': 1},
+          'list': [1, 2, 3]
+        },
         meta: OpsEventMeta(
           source: 'round-trip',
           traceId: 'trace-rt',

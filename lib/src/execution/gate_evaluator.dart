@@ -116,9 +116,7 @@ class GateEvaluator {
       passed: passed,
       actual: numValue,
       expected: threshold,
-      message: passed
-          ? null
-          : 'Expected $operator $threshold, got $numValue',
+      message: passed ? null : 'Expected $operator $threshold, got $numValue',
     );
   }
 
@@ -324,13 +322,9 @@ class ExpressionEvaluator {
       return parts.any((p) => _evaluate(p.trim(), env) == true);
     }
 
-    // Handle AND
-    if (expression.contains('&&')) {
-      final parts = expression.split('&&');
-      return parts.every((p) => _evaluate(p.trim(), env) == true);
-    }
-
-    return _evaluate(expression, env) == true;
+    // Only called for an expression with `||` or `&&`: AND.
+    final parts = expression.split('&&');
+    return parts.every((p) => _evaluate(p.trim(), env) == true);
   }
 
   bool _evaluateComparison(String expression, Map<String, dynamic> env) {
@@ -361,10 +355,8 @@ class ExpressionEvaluator {
         return (left as num) >= (right as num);
       case '<':
         return (left as num) < (right as num);
-      case '<=':
+      default: // '<='
         return (left as num) <= (right as num);
-      default:
-        return false;
     }
   }
 }

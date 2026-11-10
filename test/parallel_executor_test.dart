@@ -89,8 +89,7 @@ void main() {
         Stage(id: 'c4', name: 'C4', handler: 'tracked'),
       ];
 
-      final results =
-          await limitedExecutor.executeParallel(stages, context);
+      final results = await limitedExecutor.executeParallel(stages, context);
 
       expect(results.length, equals(4));
       expect(maxConcurrent, lessThanOrEqualTo(2));

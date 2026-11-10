@@ -48,7 +48,8 @@ void main() {
 
       expect(json['id'], equals('dash-1'));
       expect(json['title'], equals('Pipeline Overview'));
-      expect(json['description'], equals('Overview of all pipeline operations'));
+      expect(
+          json['description'], equals('Overview of all pipeline operations'));
       expect((json['panels'] as List).length, equals(1));
       expect((json['variables'] as List).length, equals(1));
       expect(json['refreshIntervalMs'], equals(30000));
@@ -247,8 +248,7 @@ void main() {
       expect(json['label'], equals('Environment'));
       expect(json['type'], equals('constant'));
       expect(json['defaultValue'], equals('production'));
-      expect(json['options'],
-          equals(['production', 'staging', 'development']));
+      expect(json['options'], equals(['production', 'staging', 'development']));
     });
 
     test('toJson() omits null optional fields', () {
@@ -286,10 +286,16 @@ void main() {
   group('PanelType', () {
     test('has all expected values', () {
       expect(PanelType.values.length, equals(6));
-      expect(PanelType.values,
-          containsAll([PanelType.lineChart, PanelType.barChart,
-              PanelType.stat, PanelType.table,
-              PanelType.heatmap, PanelType.logs]));
+      expect(
+          PanelType.values,
+          containsAll([
+            PanelType.lineChart,
+            PanelType.barChart,
+            PanelType.stat,
+            PanelType.table,
+            PanelType.heatmap,
+            PanelType.logs
+          ]));
     });
 
     test('enum names are correct', () {

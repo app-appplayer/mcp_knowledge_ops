@@ -18,9 +18,7 @@ import 'event_subscriber.dart';
 // ═══════════════════════════════════════════════════════════════════
 
 /// Idempotency contract for at-least-once delivery.
-class IdempotencyContract {
-  IdempotencyContract._();
-
+abstract final class IdempotencyContract {
   /// Idempotency window: 7 days.
   /// Events older than window are rejected on replay.
   static const idempotencyWindow = Duration(days: 7);
@@ -69,8 +67,8 @@ class IdempotentHandler {
 
     // Process and record
     await _handler(event);
-    await _kvStorage.set(
-        key, {'processedAt': DateTime.now().toIso8601String()});
+    await _kvStorage
+        .set(key, {'processedAt': DateTime.now().toIso8601String()});
   }
 }
 
@@ -79,9 +77,7 @@ class IdempotentHandler {
 // ═══════════════════════════════════════════════════════════════════
 
 /// Causal ordering contract for happens-before relationships.
-class CausalOrderingContract {
-  CausalOrderingContract._();
-
+abstract final class CausalOrderingContract {
   /// Rule 1: If event A causes event B, A is delivered before B.
   static const rule1 = 'causation_before_effect';
 
@@ -113,9 +109,7 @@ class CausalOrderEnforcer {
   Future<void> deliver(OpsEvent event, EventHandler handler) async {
     if (!canDeliver(event)) {
       // Queue for later delivery
-      _pendingEvents
-          .putIfAbsent(event.causationId!, () => [])
-          .add(event);
+      _pendingEvents.putIfAbsent(event.causationId!, () => []).add(event);
       return;
     }
 
@@ -218,8 +212,7 @@ class EventCircuitBreaker {
         // `resetAt` itself counts as elapsed: a zero timeout must half-open
         // at once even on a clock that ticks only every millisecond.
         if (!DateTime.now().isBefore(state.resetAt!)) {
-          _states[handlerName] =
-              state.copyWith(status: CircuitStatus.halfOpen);
+          _states[handlerName] = state.copyWith(status: CircuitStatus.halfOpen);
           return true;
         }
         return false;

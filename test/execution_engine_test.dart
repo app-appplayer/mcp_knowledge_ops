@@ -193,12 +193,9 @@ void main() {
         id: 'pipe-stop',
         name: 'Stop on Fail Pipeline',
         stages: [
-          const Stage(
-              id: 'stage-ok', name: 'OK', handler: 'ok-handler'),
-          const Stage(
-              id: 'stage-bad', name: 'Bad', handler: 'bad-handler'),
-          const Stage(
-              id: 'stage-after', name: 'After', handler: 'ok-handler'),
+          const Stage(id: 'stage-ok', name: 'OK', handler: 'ok-handler'),
+          const Stage(id: 'stage-bad', name: 'Bad', handler: 'bad-handler'),
+          const Stage(id: 'stage-after', name: 'After', handler: 'ok-handler'),
         ],
       );
 
@@ -280,10 +277,8 @@ void main() {
         id: 'pipe-block',
         name: 'Blocking Gate Pipeline',
         stages: [
-          const Stage(
-              id: 'stage-a', name: 'Stage A', handler: 'handler-a'),
-          const Stage(
-              id: 'stage-b', name: 'Stage B', handler: 'handler-b'),
+          const Stage(id: 'stage-a', name: 'Stage A', handler: 'handler-a'),
+          const Stage(id: 'stage-b', name: 'Stage B', handler: 'handler-b'),
         ],
         gates: [
           Gate(
@@ -324,8 +319,7 @@ void main() {
         id: 'pipe-metrics',
         name: 'Metrics Pipeline',
         stages: [
-          const Stage(
-              id: 'stage-1', name: 'Fast', handler: 'fast-handler'),
+          const Stage(id: 'stage-1', name: 'Fast', handler: 'fast-handler'),
         ],
       );
 
@@ -534,8 +528,7 @@ void main() {
         id: 'pipe-events',
         name: 'Events Pipeline',
         stages: [
-          const Stage(
-              id: 'stage-1', name: 'Stage 1', handler: 'handler'),
+          const Stage(id: 'stage-1', name: 'Stage 1', handler: 'handler'),
         ],
       );
 

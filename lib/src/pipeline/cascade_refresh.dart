@@ -5,6 +5,9 @@
 /// cycle detection.
 library;
 
+/// Refreshes the node [nodeId]; throws when the refresh fails.
+typedef NodeRefresher = Future<void> Function(String nodeId);
+
 /// Request parameters for a cascade refresh execution.
 class CascadeRefreshRequest {
   /// Dependency graph: node ID -> list of node IDs it depends on.
@@ -27,12 +30,10 @@ class CascadeRefreshResult {
   const CascadeRefreshResult({required this.results});
 
   /// Number of successfully refreshed nodes.
-  int get refreshedCount =>
-      results.values.where((r) => r.success).length;
+  int get refreshedCount => results.values.where((r) => r.success).length;
 
   /// Number of failed nodes.
-  int get failedCount =>
-      results.values.where((r) => !r.success).length;
+  int get failedCount => results.values.where((r) => !r.success).length;
 }
 
 /// Result of refreshing a single node.
@@ -59,6 +60,12 @@ class RefreshResult {
 /// Per spec section 5.1, when a summary is refreshed, all dependent
 /// summaries must also be refreshed in the correct dependency order.
 class CascadeRefreshExecutor {
+  /// Refreshes one node; the host wires it to the summaries it owns (for
+  /// example a handler that calls the summaries port).
+  final NodeRefresher? _refresher;
+
+  CascadeRefreshExecutor({NodeRefresher? refresher}) : _refresher = refresher;
+
   /// Build dependency graph and execute refresh in topological order.
   ///
   /// Uses Kahn's algorithm for topological sorting with cycle detection.
@@ -106,9 +113,7 @@ class CascadeRefreshExecutor {
 
     // Start with nodes that have no dependencies (in-degree 0)
     final queue = <String>[
-      ...inDegree.entries
-          .where((e) => e.value == 0)
-          .map((e) => e.key),
+      ...inDegree.entries.where((e) => e.value == 0).map((e) => e.key),
     ];
     final result = <String>[];
 
@@ -159,26 +164,35 @@ class CascadeRefreshExecutor {
     final batches = <List<String>>[];
     for (var i = 0; i <= maxLevel; i++) {
       batches.add(
-        levels.entries
-            .where((e) => e.value == i)
-            .map((e) => e.key)
-            .toList(),
+        levels.entries.where((e) => e.value == i).map((e) => e.key).toList(),
       );
     }
 
     return batches;
   }
 
-  /// Refresh a single node.
+  /// Refresh a single node through the host's [NodeRefresher].
   ///
-  /// Override this method to provide actual refresh logic via
-  /// ExecutionEngine or a registered handler that calls
-  /// `FactsPort.writeFacts`.
+  /// A node is reported refreshed only when the refresher ran and returned.
+  /// Without a refresher, or when it throws, the node is reported failed with
+  /// the reason; nothing is reported refreshed that was not.
   Future<RefreshResult> _refreshNode(
     String nodeId,
     CascadeRefreshRequest request,
   ) async {
-    // Placeholder for actual refresh logic via ExecutionEngine
-    return RefreshResult(nodeId: nodeId, success: true);
+    final refresher = _refresher;
+    if (refresher == null) {
+      return RefreshResult(
+        nodeId: nodeId,
+        success: false,
+        error: 'No node refresher is configured; nothing was refreshed',
+      );
+    }
+    try {
+      await refresher(nodeId);
+      return RefreshResult(nodeId: nodeId, success: true);
+    } catch (e) {
+      return RefreshResult(nodeId: nodeId, success: false, error: e.toString());
+    }
   }
 }

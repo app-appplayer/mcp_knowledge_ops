@@ -263,8 +263,7 @@ void main() {
       expect(defaults.streamOrdering, equals(StreamOrdering.strict));
       expect(defaults.crossStreamOrdering,
           equals(CrossStreamOrdering.correlationOrdered));
-      expect(defaults.deliverySemantics,
-          equals(DeliverySemantics.atLeastOnce));
+      expect(defaults.deliverySemantics, equals(DeliverySemantics.atLeastOnce));
       expect(defaults.consumerOrdering, equals(ConsumerOrdering.fifo));
     });
 
@@ -279,10 +278,9 @@ void main() {
     test('strict preset has full ordering guarantees', () {
       const strict = OrderingGuarantees.strict;
       expect(strict.streamOrdering, equals(StreamOrdering.strict));
-      expect(strict.crossStreamOrdering,
-          equals(CrossStreamOrdering.totalOrder));
-      expect(strict.deliverySemantics,
-          equals(DeliverySemantics.exactlyOnce));
+      expect(
+          strict.crossStreamOrdering, equals(CrossStreamOrdering.totalOrder));
+      expect(strict.deliverySemantics, equals(DeliverySemantics.exactlyOnce));
       expect(strict.consumerOrdering, equals(ConsumerOrdering.fifo));
     });
 
@@ -296,8 +294,7 @@ void main() {
 
       expect(custom.streamOrdering, equals(StreamOrdering.causal));
       expect(custom.crossStreamOrdering, equals(CrossStreamOrdering.none));
-      expect(custom.deliverySemantics,
-          equals(DeliverySemantics.exactlyOnce));
+      expect(custom.deliverySemantics, equals(DeliverySemantics.exactlyOnce));
       expect(custom.consumerOrdering, equals(ConsumerOrdering.priority));
     });
   });

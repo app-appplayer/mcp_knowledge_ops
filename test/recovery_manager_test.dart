@@ -90,10 +90,14 @@ void main() {
   group('RecoveryStrategy enum', () {
     test('has all four strategies', () {
       expect(RecoveryStrategy.values, hasLength(4));
-      expect(RecoveryStrategy.values, contains(RecoveryStrategy.resumeFromCheckpoint));
-      expect(RecoveryStrategy.values, contains(RecoveryStrategy.rollbackAndRetry));
-      expect(RecoveryStrategy.values, contains(RecoveryStrategy.skipAndContinue));
-      expect(RecoveryStrategy.values, contains(RecoveryStrategy.manualIntervention));
+      expect(RecoveryStrategy.values,
+          contains(RecoveryStrategy.resumeFromCheckpoint));
+      expect(
+          RecoveryStrategy.values, contains(RecoveryStrategy.rollbackAndRetry));
+      expect(
+          RecoveryStrategy.values, contains(RecoveryStrategy.skipAndContinue));
+      expect(RecoveryStrategy.values,
+          contains(RecoveryStrategy.manualIntervention));
     });
   });
 
@@ -221,7 +225,8 @@ void main() {
       expect(result.message, contains('manual intervention'));
     });
 
-    test('rollbackAndRetry with no checkpoint and no stages returns readyForRetry',
+    test(
+        'rollbackAndRetry with no checkpoint and no stages returns readyForRetry',
         () async {
       final context = testExecutionContext(runId: 'run-rollback');
       final result = await recoveryManager.recover(
